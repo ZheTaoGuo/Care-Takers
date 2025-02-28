@@ -2,8 +2,6 @@ package com.example.caresync
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -21,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,7 +54,7 @@ fun CareSyncApp(
         Scaffold(
             topBar = {
                 val currentRoute = currentRoute(navController) ?: "CareSync"
-                TopBar(title = currentRoute) { showSettings = true } // TODO: Make title nicer
+                TopBar(navController) { showSettings = true }
             },
             bottomBar = { BottomNavBar(navController) }
         ) { innerPadding ->
@@ -101,8 +98,8 @@ fun BottomNavBar(navController: NavHostController) {
                         restoreState = true
                     }
                 },
-                icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },
-                label = { Text(item.title) }
+                icon = { Icon(painterResource(id = item.icon), contentDescription = item.shortTitle) },
+                label = { Text(item.shortTitle) }
             )
         }
     }
@@ -116,20 +113,37 @@ fun currentRoute(navController: NavHostController): String? {
 }
 
 // Enum-like class for navigation items
-sealed class BottomNavItem(val route: String, val title: String, val icon: Int) {
+sealed class BottomNavItem(val route: String, val shortTitle: String, val topBarTitle: String, val icon: Int) {
     // TODO: TO ALL Replace these icons with what you would want for your tab. Make sure it's a painter resource id
-    data object Medication : BottomNavItem("medication", "Med", android.R.drawable.ic_menu_agenda)
-    data object Calendar : BottomNavItem("calendar", "Cal", android.R.drawable.ic_menu_my_calendar)
-    data object HealthCard : BottomNavItem("healthcard", "HCard", android.R.drawable.ic_menu_info_details)
-    data object Mood : BottomNavItem("mood", "Mood", android.R.drawable.ic_menu_camera)
-    data object Map : BottomNavItem("map", "Map", android.R.drawable.ic_menu_mapmode)
+    data object Medication : BottomNavItem("medication", "Med", "Medication", android.R.drawable.ic_menu_agenda)
+    data object Calendar : BottomNavItem("calendar", "Cal", "Calendar", android.R.drawable.ic_menu_my_calendar)
+    data object HealthCard : BottomNavItem("healthcard", "HCard", "Health Card", android.R.drawable.ic_menu_info_details)
+    data object Mood : BottomNavItem("mood", "Mood", "Mood", android.R.drawable.ic_menu_camera)
+    data object Map : BottomNavItem("map", "Map", "Map", android.R.drawable.ic_menu_mapmode)
+
+    companion object {
+        // Helper function to get the display title from the route
+        fun getTitleFromRoute(route: String): String {
+            return when (route) {
+                Medication.route -> Medication.topBarTitle
+                Calendar.route -> Calendar.topBarTitle
+                HealthCard.route -> HealthCard.topBarTitle
+                Mood.route -> Mood.topBarTitle
+                Map.route -> Map.topBarTitle
+                else -> "CareSync"
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(title: String, onSettingsClick: () -> Unit) {
+fun TopBar(navController: NavHostController, onSettingsClick: () -> Unit) {
+    val currentRoute = currentRoute(navController) ?: "CareSync"
+    val displayTitle = BottomNavItem.getTitleFromRoute(currentRoute)
+
     CenterAlignedTopAppBar(
-        title = { Text(title, style = MaterialTheme.typography.titleLarge) },
+        title = { Text(displayTitle, style = MaterialTheme.typography.titleLarge) },
         actions = {
             IconButton(onClick = onSettingsClick) {
                 Icon(Icons.Default.Settings, contentDescription = "Settings")
