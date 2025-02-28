@@ -22,5 +22,5 @@ fun MoodScreen() {
 @Preview
 @Composable
 fun MoodScreenPreview() {
-    CareSyncApp(BottomNavItem.Mood.route)
+    CareSyncApp({}, BottomNavItem.Mood.route)
 }

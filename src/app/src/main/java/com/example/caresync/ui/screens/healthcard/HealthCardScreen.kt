@@ -23,5 +23,5 @@ fun HealthCardScreen() {
 @Preview
 @Composable
 fun HealthCardScreenPreview() {
-    CareSyncApp(BottomNavItem.HealthCard.route)
+    CareSyncApp({}, BottomNavItem.HealthCard.route)
 }

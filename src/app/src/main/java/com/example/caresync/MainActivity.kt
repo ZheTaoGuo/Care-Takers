@@ -59,8 +59,12 @@ class MainActivity : ComponentActivity() {
                     SplashScreen()
                 } else {
                     when (loginState) {
-                        LoginState.PATIENT -> CareSyncApp()
-                        LoginState.CAREGIVER -> CareGiverScreen()
+                        LoginState.PATIENT -> CareSyncApp(
+                            onLogout = { loginState = LoginState.UNKNOWN }
+                        )
+                        LoginState.CAREGIVER -> CareGiverScreen(
+                            onLogout = { loginState = LoginState.UNKNOWN }
+                        )
                         LoginState.UNKNOWN -> OnBoardingScreen(
                             onLoginCareGiver = { loginState = LoginState.CAREGIVER },
                             onLoginPatient = { loginState = LoginState.PATIENT }

@@ -22,5 +22,5 @@ fun MedicationScreen() {
 @Preview
 @Composable
 fun MedicationScreenPreview() {
-    CareSyncApp(BottomNavItem.Medication.route)
+    CareSyncApp({}, BottomNavItem.Medication.route)
 }

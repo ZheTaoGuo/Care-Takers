@@ -41,6 +41,7 @@ import com.example.caresync.ui.screens.settings.SettingsScreen
 @Composable
 // TODO: Need to decide what is the default destination at launch.
 fun CareSyncApp(
+    onLogout: () -> Unit,
     startDestination: String = BottomNavItem.Medication.route,
     initialShowSettings: Boolean = false
 ) {
@@ -48,7 +49,10 @@ fun CareSyncApp(
     var showSettings by remember { mutableStateOf(initialShowSettings) }
 
     if (showSettings) {
-        SettingsScreen(onClose = { showSettings = false })
+        SettingsScreen(
+            onClose = { showSettings = false },
+            onLogout = onLogout
+        )
     } else {
         Scaffold(
             topBar = {
@@ -139,5 +143,5 @@ fun TopBar(title: String, onSettingsClick: () -> Unit) {
 @Preview
 @Composable
 fun CareSyncAppPreview() {
-    CareSyncApp()
+    CareSyncApp({})
 }

@@ -22,5 +22,5 @@ fun CalendarScreen() {
 @Preview
 @Composable
 fun CalendarScreenPreview() {
-    CareSyncApp(BottomNavItem.Calendar.route)
+    CareSyncApp({}, BottomNavItem.Calendar.route)
 }

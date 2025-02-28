@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,7 +26,8 @@ import com.example.caresync.CareSyncApp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    onLogout: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -46,6 +48,8 @@ fun SettingsScreen(
                 .padding(16.dp)
         ) {
             Text("Settings content goes here")
+
+            Button(onClick = onLogout) { Text("Logout") }
         }
     }
 }
@@ -53,5 +57,5 @@ fun SettingsScreen(
 @Preview
 @Composable
 fun SettingsScreenPreview() {
-    CareSyncApp(initialShowSettings = true)
+    CareSyncApp({}, initialShowSettings = true)
 }

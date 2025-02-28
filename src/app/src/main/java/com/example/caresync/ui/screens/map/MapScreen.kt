@@ -23,5 +23,5 @@ fun MapScreen() {
 @Preview
 @Composable
 fun MapScreenPreview() {
-    CareSyncApp(BottomNavItem.Map.route)
+    CareSyncApp({}, BottomNavItem.Map.route)
 }
