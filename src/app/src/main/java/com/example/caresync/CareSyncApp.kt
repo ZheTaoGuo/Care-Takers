@@ -103,18 +103,6 @@ sealed class BottomNavItem(val route: String, val title: String, val icon: Int) 
 }
 
 
-// TODO: Remove this in future once everyone has implemented their screens
-@Composable
-fun CenteredText(text: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text, style = MaterialTheme.typography.headlineMedium)
-    }
-}
-
-
-
-
-
 
 @Preview
 @Composable
