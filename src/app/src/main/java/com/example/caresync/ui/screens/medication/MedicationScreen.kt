@@ -1,4 +1,4 @@
-package com.example.caresync.ui.screens
+package com.example.caresync.ui.screens.medication
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
@@ -7,10 +7,10 @@ import com.example.caresync.CareSyncApp
 import com.example.caresync.CenteredText
 
 @Composable
-fun MoodScreen() { CenteredText("Mood\nScreen") }
+fun MedicationScreen() { CenteredText("Medication\nScreen") }
 
 @Preview
 @Composable
-fun MoodScreenPreview() {
-    CareSyncApp(BottomNavItem.Mood.route)
+fun MedicationScreenPreview() {
+    CareSyncApp(BottomNavItem.Medication.route)
 }

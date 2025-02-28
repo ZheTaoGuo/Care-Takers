@@ -1,4 +1,4 @@
-package com.example.caresync.ui.screens
+package com.example.caresync.ui.screens.map
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview

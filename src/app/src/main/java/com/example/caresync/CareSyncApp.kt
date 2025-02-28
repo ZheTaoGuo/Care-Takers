@@ -17,18 +17,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.caresync.ui.screens.CalendarScreen
-import com.example.caresync.ui.screens.HealthCardScreen
-import com.example.caresync.ui.screens.MapScreen
-import com.example.caresync.ui.screens.MedicationScreen
-import com.example.caresync.ui.screens.MoodScreen
+import com.example.caresync.ui.screens.calendar.CalendarScreen
+import com.example.caresync.ui.screens.healthcard.HealthCardScreen
+import com.example.caresync.ui.screens.map.MapScreen
+import com.example.caresync.ui.screens.medication.MedicationScreen
+import com.example.caresync.ui.screens.mood.MoodScreen
 
 @Composable
 // TODO: Need to decide what is the default destination at launch.
