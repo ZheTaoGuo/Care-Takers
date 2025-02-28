@@ -1,5 +1,6 @@
 package com.example.caresync.ui.screens.settings
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,8 @@ fun SettingsScreen(
     onClose: () -> Unit,
     onLogout: () -> Unit
 ) {
+    BackHandler { onClose() }
+
     Scaffold(
         topBar = {
             TopAppBar(
