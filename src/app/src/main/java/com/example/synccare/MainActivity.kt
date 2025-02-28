@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -38,14 +39,16 @@ class MainActivity : ComponentActivity() {
 
             // Simulate loading for 2 seconds
             LaunchedEffect(Unit) {
-                delay(2000)
+                delay(1300)
                 showSplash = false
             }
 
-            if (showSplash) {
-                SplashScreen()
-            } else {
-                MainScreen()
+            Crossfade(targetState = showSplash, label = "Screen Transition") { isSplash ->
+                if (isSplash) {
+                    SplashScreen()
+                } else {
+                    MainScreen()
+                }
             }
         }
     }
