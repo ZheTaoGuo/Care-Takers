@@ -5,7 +5,12 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -31,27 +36,41 @@ import com.example.caresync.ui.screens.healthcard.HealthCardScreen
 import com.example.caresync.ui.screens.map.MapScreen
 import com.example.caresync.ui.screens.medication.MedicationScreen
 import com.example.caresync.ui.screens.mood.MoodScreen
+import com.example.caresync.ui.screens.settings.SettingsScreen
 
 @Composable
 // TODO: Need to decide what is the default destination at launch.
-fun CareSyncApp(startDestination: String = BottomNavItem.Medication.route) {
+fun CareSyncApp(
+    startDestination: String = BottomNavItem.Medication.route,
+    initialShowSettings: Boolean = false
+) {
     val navController = rememberNavController()
-    Scaffold(
-        bottomBar = { BottomNavBar(navController) }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = startDestination,
-            modifier = Modifier.padding(innerPadding),
-            // NOTE: Remove transitions between tabs. Adjust as we see fit.
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
-        ) {
-            composable(BottomNavItem.Medication.route) { MedicationScreen() }
-            composable(BottomNavItem.Calendar.route) { CalendarScreen() }
-            composable(BottomNavItem.HealthCard.route) { HealthCardScreen() }
-            composable(BottomNavItem.Mood.route) { MoodScreen() }
-            composable(BottomNavItem.Map.route) { MapScreen() }
+    var showSettings by remember { mutableStateOf(initialShowSettings) }
+
+    if (showSettings) {
+        SettingsScreen(onClose = { showSettings = false })
+    } else {
+        Scaffold(
+            topBar = {
+                val currentRoute = currentRoute(navController) ?: "CareSync"
+                TopBar(title = currentRoute) { showSettings = true } // TODO: Make title nicer
+            },
+            bottomBar = { BottomNavBar(navController) }
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = startDestination,
+                modifier = Modifier.padding(innerPadding),
+                // NOTE: Remove transitions between tabs. Adjust as we see fit.
+                enterTransition = { EnterTransition.None },
+                exitTransition = { ExitTransition.None }
+            ) {
+                composable(BottomNavItem.Medication.route) { MedicationScreen() }
+                composable(BottomNavItem.Calendar.route) { CalendarScreen() }
+                composable(BottomNavItem.HealthCard.route) { HealthCardScreen() }
+                composable(BottomNavItem.Mood.route) { MoodScreen() }
+                composable(BottomNavItem.Map.route) { MapScreen() }
+            }
         }
     }
 }
@@ -100,6 +119,19 @@ sealed class BottomNavItem(val route: String, val title: String, val icon: Int) 
     data object HealthCard : BottomNavItem("healthcard", "HCard", android.R.drawable.ic_menu_info_details)
     data object Mood : BottomNavItem("mood", "Mood", android.R.drawable.ic_menu_camera)
     data object Map : BottomNavItem("map", "Map", android.R.drawable.ic_menu_mapmode)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar(title: String, onSettingsClick: () -> Unit) {
+    CenterAlignedTopAppBar(
+        title = { Text(title, style = MaterialTheme.typography.titleLarge) },
+        actions = {
+            IconButton(onClick = onSettingsClick) {
+                Icon(Icons.Default.Settings, contentDescription = "Settings")
+            }
+        }
+    )
 }
 
 
