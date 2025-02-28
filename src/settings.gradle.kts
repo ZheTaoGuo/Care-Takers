@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SyncCare"
+rootProject.name = "CareSync"
 include(":app")

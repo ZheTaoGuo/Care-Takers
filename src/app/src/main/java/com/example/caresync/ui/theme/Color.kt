@@ -1,4 +1,4 @@
-package com.example.synccare.ui.theme
+package com.example.caresync.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

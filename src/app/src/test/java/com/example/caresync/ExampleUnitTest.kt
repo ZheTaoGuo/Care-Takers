@@ -1,4 +1,4 @@
-package com.example.synccare
+package com.example.caresync
 
 import org.junit.Test
 
