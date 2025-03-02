@@ -7,79 +7,57 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.caresync.BottomNavItem
 import com.example.caresync.CareSyncApp
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 
 @Composable
 fun HealthCardScreen(viewModel: HealthCardViewModel = viewModel()) {
-    val medications by viewModel.medications.collectAsState()
-    var name by remember { mutableStateOf("") }
-    var dosage by remember { mutableStateOf("") }
-    var frequency by remember { mutableStateOf("") }
+    var showAddScreen by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Medication Name") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = dosage,
-                onValueChange = { dosage = it },
-                label = { Text("Dosage") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = frequency,
-                onValueChange = { frequency = it },
-                label = { Text("Frequency") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Button(
-                onClick = {
-                    if (name.isNotBlank() && dosage.isNotBlank() && frequency.isNotBlank()) {
-                        viewModel.addMedication(name, dosage, frequency)
-                        name = ""; dosage = ""; frequency = ""
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
+    if (showAddScreen) {
+        AddMedicationScreen(
+            onMedicationAdded = { name, dosage, frequency, imageUri ->
+                viewModel.addMedication(name, dosage, frequency, imageUri)
+                showAddScreen = false
+            },
+            onBack = { showAddScreen = false }
+        )
+    } else {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
             ) {
-                Text("Add Medication")
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text("Current Medications:", style = MaterialTheme.typography.titleMedium)
-            LazyColumn {
-                items(medications) { medication ->
-                    MedicationItem(medication)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Health Card",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    IconButton(onClick = { showAddScreen = true }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add Medication")
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                MedicationContent(viewModel = viewModel)
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text("Share QR Code with Clinic/Caregiver:")
-            QRCodeGenerator(content = medications.joinToString { "${it.name}: ${it.dosage}, ${it.frequency}" })
-        }    }
+        }
+    }
 }
-
-
 @Preview
 @Composable
 fun HealthCardScreenPreview() {
