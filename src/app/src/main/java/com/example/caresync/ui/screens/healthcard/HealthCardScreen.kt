@@ -16,48 +16,92 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import com.example.caresync.ui.theme.*
 
 @Composable
 fun HealthCardScreen(viewModel: HealthCardViewModel = viewModel()) {
-    var showAddScreen by remember { mutableStateOf(false) }
+    var editSection by remember { mutableStateOf<String?>(null) }
+    val userProfile by viewModel.userProfile.collectAsState()
 
-    if (showAddScreen) {
-        AddMedicationScreen(
-            onMedicationAdded = { name, dosage, frequency, imageUri ->
-                viewModel.addMedication(name, dosage, frequency, imageUri)
-                showAddScreen = false
-            },
-            onBack = { showAddScreen = false }
+    if (editSection != null) {
+        EditProfileScreen(
+            section = editSection!!,
+            viewModel = viewModel,
+            onBack = { editSection = null }
         )
     } else {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Health Card",
-                        style = MaterialTheme.typography.headlineSmall
+            LazyColumn( Modifier.fillMaxSize().padding(16.dp)) {
+                item {
+                    ProfileSection(
+                        title = "Photo and Information",
+                        content = null,
+                        onEdit = { editSection = "Photo and Information" }
                     )
-                    IconButton(onClick = { showAddScreen = true }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Medication")
+                    ProfileContent(userProfile = userProfile)
+                }
+
+                item {
+                    ProfileSection(
+                        title = "Pregnancy",
+                        content = if (userProfile.pregnancy) "Yes" else "No",
+                        onEdit = { editSection = "Pregnancy" }
+                    )
+                }
+
+                item {
+                    ProfileSection(
+                        title = "Allergies",
+                        content = userProfile.allergies,
+                        onEdit = { editSection = "Allergies" }
+                    )
+                }
+
+                item {
+                    ProfileSection(
+                        title = "Medical Conditions",
+                        content = userProfile.conditions,
+                        onEdit = { editSection = "Conditions" }
+                    )
+                }
+
+                item {
+                    ProfileSection(
+                        title = "Additional Information",
+                        content = "Height: ${userProfile.height} cm\nWeight: ${userProfile.weight} kg\n" +
+                                "Blood Type: ${userProfile.bloodType} ",
+                        onEdit = { editSection = "Additional Information" }
+                    )
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Medication",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Purple40
+                        )
+                        IconButton(onClick = { editSection = "Medications" }) {
+                            Icon(Icons.Default.Add, contentDescription = "Add Medication", tint = Purple40)
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                MedicationContent(viewModel = viewModel)
+                item {
+                    MedicationContent(viewModel = viewModel)
+                }
             }
         }
     }
 }
+
 @Preview
 @Composable
 fun HealthCardScreenPreview() {
