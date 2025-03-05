@@ -8,25 +8,49 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class HealthCardViewModel : ViewModel() {
+    private val _userProfile = MutableStateFlow(UserProfile())
+    val userProfile: StateFlow<UserProfile> = _userProfile
+
     private val _medications = MutableStateFlow<List<Medication>>(emptyList())
     val medications: StateFlow<List<Medication>> = _medications
 
-    fun addMedication(name: String, dosage: String, frequency: String, imageUri: Uri?) {
-        val newMedication = Medication(
-            id = medications.value.size + 1,
-            name = name,
-            dosage = dosage,
-            frequency = frequency,
-            imageUri = imageUri
-        )
+    fun updateUserProfileInfo(name: String, dob: String, language: String, photoUri: Uri?, organDonation: Boolean) {
         viewModelScope.launch {
-            _medications.value += newMedication
+            _userProfile.value = _userProfile.value.copy(
+                name = name,
+                dateOfBirth = dob,
+                primaryLanguage = language,
+                photoUri = photoUri,
+                organDonation = organDonation
+            )
         }
     }
 
-    fun removeMedication(medication: Medication) {
+    fun updatePregnancyStatus(isPregnant: Boolean) {
         viewModelScope.launch {
-            _medications.value = _medications.value.filterNot { it.id == medication.id }
+            _userProfile.value = _userProfile.value.copy(pregnancy = isPregnant)
+        }
+    }
+
+    fun updateAllergies(allergies: String) {
+        viewModelScope.launch {
+            _userProfile.value = _userProfile.value.copy(allergies = allergies)
+        }
+    }
+
+    fun updateMedicalConditions(conditions: String) {
+        viewModelScope.launch {
+            _userProfile.value = _userProfile.value.copy(conditions = conditions)
+        }
+    }
+
+    fun updateAdditionalInfo(height: Double, weight: Double, bloodType: String) {
+        viewModelScope.launch {
+            _userProfile.value = _userProfile.value.copy(
+                height = height,
+                weight = weight,
+                bloodType = bloodType
+            )
         }
     }
 }

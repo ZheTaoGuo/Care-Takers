@@ -24,9 +24,11 @@ fun MedicationContent(viewModel: HealthCardViewModel = viewModel()) {
     var selectedMedication by remember { mutableStateOf<Medication?>(null) }
 
     if (medications.isEmpty()) {
-        Text("No medications added yet.", style = MaterialTheme.typography.bodyMedium)
+        Box(modifier = Modifier.fillMaxSize().padding(8.dp)) {
+            Text("No medications added yet.", style = MaterialTheme.typography.bodyLarge)
+        }
     } else {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(medications) { medication ->
                     MedicationItem(
@@ -44,29 +46,6 @@ fun MedicationContent(viewModel: HealthCardViewModel = viewModel()) {
             Text("Share QR Code with Clinic/Caregiver:")
             QRCodeGenerator(content = medications.joinToString { "${it.name}: ${it.dosage}, ${it.frequency}" })
         }
-    }
-
-    if (showDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Confirm Deletion") },
-            text = { Text("Are you sure you want to remove this medication?") },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        selectedMedication?.let { viewModel.removeMedication(it) }
-                        showDeleteDialog = false
-                    }
-                ) {
-                    Text("YES")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("NO")
-                }
-            }
-        )
     }
 }
 
