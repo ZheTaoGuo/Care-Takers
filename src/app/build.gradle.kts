@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.secrets.gradle.plugin)
 }
-
 android {
     namespace = "com.example.caresync"
     compileSdk = 35
@@ -53,6 +53,9 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation("com.google.zxing:core:3.5.1")
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("com.google.android.gms:play-services-maps:19.1.0")
+    implementation("com.google.maps.android:maps-compose:2.12.0")
+    implementation("com.google.maps.android:maps-ktx:3.2.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
