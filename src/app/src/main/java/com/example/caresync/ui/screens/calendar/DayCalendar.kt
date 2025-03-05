@@ -16,6 +16,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.caresync.datasource.CalendarDataSource
 import com.example.caresync.model.CalendarEntry
 import kotlinx.coroutines.delay
@@ -41,10 +43,8 @@ fun getCurrentTime(): Pair<Int, Int> {
 }
 
 @Composable
-fun DayCalendarView(events: List<CalendarEntry>) {
-    val start: Int = 8
-    val end: Int = 22
-    val minuteHeight: Float = 1.0f
+fun DayCalendarView(viewModel: CalendarViewModel, events: List<CalendarEntry>) {
+    val uiState by viewModel.uiState.collectAsState()
 
     var currentTime by remember { mutableStateOf(getCurrentTime()) }
     // Update time every minute
@@ -62,8 +62,8 @@ fun DayCalendarView(events: List<CalendarEntry>) {
             .fillMaxSize()
             .background(color = Color.White)
             .drawBehind {
-                val hourHeight = (60 * minuteHeight).dp.toPx() // Height of each hour row
-                val yOffset = ((currentHour - start) * hourHeight) + ((currentMinute / 60f) * hourHeight)
+                val hourHeight = (60 * uiState.minuteHeight).dp.toPx() // Height of each hour row
+                val yOffset = ((currentHour - uiState.startHour) * hourHeight) + ((currentMinute / 60f) * hourHeight)
 
                 drawCircle(
                     color = Color.Red,
@@ -80,11 +80,11 @@ fun DayCalendarView(events: List<CalendarEntry>) {
         contentPadding = PaddingValues(16.dp)
     ) {
         items(24) { hour ->
-            if (hour in start..end) {
+            if (hour in uiState.startHour .. uiState.endHour) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height((60 * minuteHeight).dp) // Adjust height for different time resolutions
+                        .height((60 * uiState.minuteHeight).dp) // Adjust height for different time resolutions
                         .drawBehind {
                             drawLine(
                                 color = Color.Gray.copy(alpha = 0.5f),
@@ -106,11 +106,11 @@ fun DayCalendarView(events: List<CalendarEntry>) {
                         events.find { it.hour == hour }?.let { event ->
                             Box(
                                 modifier = Modifier
-                                    .offset(y = (event.min * minuteHeight).dp)
+                                    .offset(y = (event.min * uiState.minuteHeight).dp)
                                     .clip(RoundedCornerShape(8.dp))
                                     .border(1.dp, Color.Black, RoundedCornerShape(8.dp))
                                     .fillMaxWidth()
-                                    .height((58*minuteHeight).dp)
+                                    .height((58*uiState.minuteHeight).dp)
                                     .background(Color.Blue.copy(alpha = 0.3f))
                                     .padding(8.dp)
                             ) {
@@ -135,5 +135,6 @@ fun DayCalendarView(events: List<CalendarEntry>) {
 @Preview(showBackground = true)
 @Composable
 fun DayCalendarViewPreview() {
-    DayCalendarView(CalendarDataSource.sampleEvents)
+    val viewModel: CalendarViewModel = viewModel()
+    DayCalendarView(viewModel, CalendarDataSource.sampleEvents)
 }
