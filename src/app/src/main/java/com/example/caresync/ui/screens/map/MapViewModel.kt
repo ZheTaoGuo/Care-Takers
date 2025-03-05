@@ -86,18 +86,6 @@ class MapViewModel : ViewModel() {
         )
     }
 
-    // ✅ Corrected Function: Update stock status properly
-    fun updateStockStatus(clinic: Clinic, newStockStatus: StockStatus) {
-        viewModelScope.launch {
-            val index = _clinicLocations.indexOfFirst { it.name == clinic.name }
-            if (index != -1) {
-                val updatedClinic = _clinicLocations[index].copy(stockStatus = newStockStatus)
-                _clinicLocations[index] = updatedClinic // ✅ Proper way to update mutableStateListOf
-            }
-        }
-    }
-
-    // ✅ Use StateFlow for expansion state management
     fun toggleClinicExpansion(clinic: Clinic) {
         viewModelScope.launch {
             val updatedStates = _expandedStates.value.toMutableMap()
