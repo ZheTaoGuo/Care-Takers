@@ -5,17 +5,22 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -23,25 +28,63 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.caresync.datasource.CalendarDataSource
+import com.example.caresync.model.CalendarEntry
+import kotlinx.coroutines.delay
+import java.util.Calendar
+
+// Function to get current hour and minute (API 24+ compatible)
+fun getCurrentTime(): Pair<Int, Int> {
+    val calendar = Calendar.getInstance()
+    return calendar.get(Calendar.HOUR_OF_DAY) to calendar.get(Calendar.MINUTE)
+}
 
 @Composable
-fun DayCalendarView(events: List<Event>) {
+fun DayCalendarView(events: List<CalendarEntry>) {
     val start: Int = 8
     val end: Int = 22
-    val minSize: Float = 1.0f
+    val minuteHeight: Float = 1.0f
+
+    var currentTime by remember { mutableStateOf(getCurrentTime()) }
+    // Update time every minute
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(60_000L) // Wait 1 minute
+            currentTime = getCurrentTime() // Update the state
+        }
+    }
+
+    val (currentHour, currentMinute) = currentTime
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White),
+            .background(color = Color.White)
+            .drawBehind {
+                val hourHeight = (60 * minuteHeight).dp.toPx() // Height of each hour row
+                val yOffset = ((currentHour - start) * hourHeight) + ((currentMinute / 60f) * hourHeight)
+
+                drawCircle(
+                    color = Color.Red,
+                    radius = 16f,
+                    center = Offset(0f, yOffset)
+                )
+                drawLine(
+                    color = Color.Red,
+                    start = Offset(0f, yOffset),
+                    end = Offset(size.width, yOffset),
+                    strokeWidth = 3.dp.toPx()
+                )
+            },
         contentPadding = PaddingValues(16.dp)
     ) {
         items(24) { hour ->
-            if (hour >= start && hour <= end) {
+            if (hour in start..end) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height((60 * minSize).dp) // Adjust height for different time resolutions
+                        .height((60 * minuteHeight).dp) // Adjust height for different time resolutions
                         .drawBehind {
                             drawLine(
                                 color = Color.Gray.copy(alpha = 0.5f),
@@ -63,15 +106,21 @@ fun DayCalendarView(events: List<Event>) {
                         events.find { it.hour == hour }?.let { event ->
                             Box(
                                 modifier = Modifier
-                                    .offset(y = (event.min * minSize).dp)
+                                    .offset(y = (event.min * minuteHeight).dp)
                                     .clip(RoundedCornerShape(8.dp))
                                     .border(1.dp, Color.Black, RoundedCornerShape(8.dp))
                                     .fillMaxWidth()
-                                    .height((58*minSize).dp)
+                                    .height((58*minuteHeight).dp)
                                     .background(Color.Blue.copy(alpha = 0.3f))
                                     .padding(8.dp)
                             ) {
                                 Text(text = "${event.title} [${event.hour}:${event.min}]", color = Color.Black)
+
+                                Checkbox(
+                                    event.completed,
+                                    onCheckedChange = {},
+                                    modifier = Modifier.align(Alignment.CenterEnd)
+                                )
                             }
                         }
                     }
@@ -81,17 +130,10 @@ fun DayCalendarView(events: List<Event>) {
     }
 }
 
-data class Event(val title: String, val hour: Int, val min: Int, val details: String)
 
 
 @Preview(showBackground = true)
 @Composable
 fun DayCalendarViewPreview() {
-    val sampleEvents = listOf(
-        Event("Meeting", 9, 30, "Once a day"),
-        Event("Workout", 12, 0, "Blah blah blah"),
-        Event("Lunch", 13, 45, "Blah blah blah"),
-        Event("Project Work", 15, 15, "Blah blah blah")
-    )
-    DayCalendarView(sampleEvents)
+    DayCalendarView(CalendarDataSource.sampleEvents)
 }
