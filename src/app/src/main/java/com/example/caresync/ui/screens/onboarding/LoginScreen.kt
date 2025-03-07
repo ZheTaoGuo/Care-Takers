@@ -112,7 +112,7 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onLoginCareGiver: ()->Unit, on
                 ) {
                     Text(
                         text = "Welcome Back!",
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         fontFamily = CustomFont.Quicksand(),
                         fontWeight = FontWeight.W300,
                         color = Color.Black,
@@ -125,7 +125,9 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onLoginCareGiver: ()->Unit, on
                         value = email,
                         onValueChange = { email = it },
                         placeholder = "Email",
-                        leadingIcon = { Icon(imageVector = Icons.Outlined.Email, contentDescription = "Email Icon") },
+                        leadingIcon = { Icon(imageVector = Icons.Outlined.Email, contentDescription = "Email Icon",
+                            modifier = Modifier.size(18.dp)
+                            ) },
                         inputType = KeyboardType.Email
                     )
 
@@ -138,7 +140,9 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onLoginCareGiver: ()->Unit, on
                         placeholder = "Password",
                         inputType = KeyboardType.Password,
                         isPassword = true,
-                        leadingIcon = { Icon(imageVector = Icons.Outlined.Lock, contentDescription = "Password Icon") }
+                        leadingIcon = { Icon(imageVector = Icons.Outlined.Lock, contentDescription = "Password Icon",
+                            modifier = Modifier.size(18.dp)
+                        ) }
                     )
 
                     // Forgot Password Link
