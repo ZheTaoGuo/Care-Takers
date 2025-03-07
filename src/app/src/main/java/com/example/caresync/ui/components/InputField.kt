@@ -35,7 +35,7 @@ fun InputField(
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp)) // Capsule shape
             .background(Color(0xFF9EC3C7)) // Background color
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 0.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Display the leading icon
@@ -48,9 +48,12 @@ fun InputField(
             onValueChange = onValueChange,
             placeholder = { Text(placeholder, color = Color(0xFF6F6C6C)) }, // Custom placeholder color
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent, // No background override
+                focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent
+                disabledContainerColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
             ),
             keyboardOptions = KeyboardOptions(
                 keyboardType = inputType,

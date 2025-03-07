@@ -38,6 +38,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.caresync.ui.screens.caregiver.CareGiverScreen
 import com.example.caresync.ui.screens.onboarding.OnBoardingScreen
+import com.example.caresync.ui.theme.CareSyncTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,22 +54,25 @@ class MainActivity : ComponentActivity() {
                 showSplash = false
                 // TODO: Maybe get the cached login state of the app?
             }
+            CareSyncTheme {
+                Crossfade(targetState = showSplash, label = "Screen Transition") { isSplash ->
+                    if (isSplash) {
+                        SplashScreen()
+                    } else {
+                        when (loginState) {
+                            LoginState.PATIENT -> CareSyncApp(
+                                onLogout = { loginState = LoginState.UNKNOWN }
+                            )
 
-            Crossfade(targetState = showSplash, label = "Screen Transition") { isSplash ->
-                if (isSplash) {
-                    SplashScreen()
-                } else {
-                    when (loginState) {
-                        LoginState.PATIENT -> CareSyncApp(
-                            onLogout = { loginState = LoginState.UNKNOWN }
-                        )
-                        LoginState.CAREGIVER -> CareGiverScreen(
-                            onLogout = { loginState = LoginState.UNKNOWN }
-                        )
-                        LoginState.UNKNOWN -> OnBoardingScreen(
-                            onLoginCareGiver = { loginState = LoginState.CAREGIVER },
-                            onLoginPatient = { loginState = LoginState.PATIENT }
-                        )
+                            LoginState.CAREGIVER -> CareGiverScreen(
+                                onLogout = { loginState = LoginState.UNKNOWN }
+                            )
+
+                            LoginState.UNKNOWN -> OnBoardingScreen(
+                                onLoginCareGiver = { loginState = LoginState.CAREGIVER },
+                                onLoginPatient = { loginState = LoginState.PATIENT }
+                            )
+                        }
                     }
                 }
             }

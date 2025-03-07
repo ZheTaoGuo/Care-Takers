@@ -24,11 +24,11 @@ fun AppTitle() {
             fontFamily = fontFamily,
             fontSize = 16.sp, // Adjust font size as needed
             letterSpacing = 0.4.em, // 40% letter spacing
-            color = Color.Black // Adjust if needed
+            color = Color.Black
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 50.dp), // Align at Y = 50dp
+            .padding(top = 20.dp),
         textAlign = TextAlign.Center
     )
 }
