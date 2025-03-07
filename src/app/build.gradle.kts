@@ -2,14 +2,14 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.secrets.gradle.plugin)
 }
-
 android {
-    namespace = "com.example.synccare"
+    namespace = "com.example.caresync"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.synccare"
+        applicationId = "com.example.caresync"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -50,6 +50,12 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.navigation.compose)
+    implementation("com.google.zxing:core:3.5.1")
+    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("com.google.android.gms:play-services-maps:19.1.0")
+    implementation("com.google.maps.android:maps-compose:2.12.0")
+    implementation("com.google.maps.android:maps-ktx:3.2.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -57,4 +63,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
 }
