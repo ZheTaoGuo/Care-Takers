@@ -10,6 +10,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,33 +22,26 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun OnBoardingScreen(onLoginCareGiver: ()->Unit, onLoginPatient: ()->Unit) {
+    var showLogin by remember { mutableStateOf(true) } // Toggles between login & register
+
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White),
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.weight(1f))
-
-        Text("On\nBoarding\nScreen",
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center)
-
-        Spacer(Modifier.weight(2f))
-
-        Button(
-            onClick = onLoginCareGiver
-        ) {
-            Text("Login as Care Giver")
+        if (showLogin) {
+            LoginScreen(
+                onNavigateToRegister = { showLogin = false },
+                onLoginCareGiver = onLoginCareGiver,
+                onLoginPatient = onLoginPatient
+            )
+        } else {
+            RegisterScreen(
+                onNavigateToLogin = { showLogin = true },
+                onLoginCareGiver = onLoginCareGiver,
+                onLoginPatient = onLoginPatient
+            )
         }
-
-        Button(
-            onClick = onLoginPatient
-        ) {
-            Text("Login as Patient")
-        }
-
-        Spacer(Modifier.weight(1f))
     }
 }
 
