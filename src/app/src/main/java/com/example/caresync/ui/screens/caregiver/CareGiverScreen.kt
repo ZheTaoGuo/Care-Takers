@@ -49,7 +49,7 @@ fun CareGiverNavHost(navController: NavHostController, onLogout: () -> Unit) {
     NavHost(navController, startDestination = "caregiver_dashboard") {
         composable("caregiver_dashboard") { CareGiverDashboard(navController) }
         composable("profile_screen") { ProfileScreen(navController) }
-        composable("inventory_screen") { InventoryScreen() }
+        composable("inventory_screen") { InventoryScreen(navController) }
         composable("monitoring_screen") { MonitoringScreen() }
         composable("caregiver_settings") { CareGiverSettingsScreen(navController, onLogout) }
     }
