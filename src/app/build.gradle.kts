@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.datastore.preferences)
+    implementation ("co.yml:ycharts:1.0.0")
 
     implementation("com.google.zxing:core:3.5.1")
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")

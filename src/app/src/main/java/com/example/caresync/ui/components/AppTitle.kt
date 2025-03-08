@@ -1,6 +1,9 @@
 package com.example.caresync.ui.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -15,20 +18,39 @@ import com.example.caresync.R
 import com.example.caresync.ui.theme.CustomFont
 
 @Composable
-fun AppTitle() {
+fun AppTitle(onBackClick: (() -> Unit)? = null) {
     val fontFamily = CustomFont.Commissioner()
 
-    Text(
-        text = "CARESYNC",
-        style = TextStyle(
-            fontFamily = fontFamily,
-            fontSize = 16.sp, // Adjust font size as needed
-            letterSpacing = 0.4.em, // 40% letter spacing
-            color = Color.Black
-        ),
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp),
-        textAlign = TextAlign.Center
-    )
+            .padding(vertical = 20.dp, horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Show Back Button if `onBackClick` is provided
+        if (onBackClick != null) {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Black
+                )
+            }
+        }
+
+        Text(
+            text = "CARESYNC",
+            style = TextStyle(
+                fontFamily = fontFamily,
+                fontSize = 16.sp,
+                letterSpacing = 0.4.em,
+                color = Color.Black
+            ),
+            modifier = Modifier
+                .weight(1f) // Centers text while back button stays aligned to the left
+                .padding(end = if (onBackClick != null) 48.dp else 0.dp), // Adjust padding when back button is shown
+            textAlign = TextAlign.Center
+        )
+    }
 }
+
