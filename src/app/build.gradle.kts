@@ -52,6 +52,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.datastore.preferences)
+
     implementation("com.google.zxing:core:3.5.1")
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")
     implementation("com.google.android.gms:play-services-maps:19.1.0")
