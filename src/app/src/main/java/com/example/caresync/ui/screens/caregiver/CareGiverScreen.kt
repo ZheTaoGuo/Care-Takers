@@ -48,10 +48,10 @@ fun CareGiverScreen(onLogout: () -> Unit) {
 fun CareGiverNavHost(navController: NavHostController, onLogout: () -> Unit) {
     NavHost(navController, startDestination = "caregiver_dashboard") {
         composable("caregiver_dashboard") { CareGiverDashboard(navController) }
-        composable("profile_screen") { ProfileScreen() }
+        composable("profile_screen") { ProfileScreen(navController) }
         composable("inventory_screen") { InventoryScreen() }
         composable("monitoring_screen") { MonitoringScreen() }
-        composable("caregiver_settings") { CareGiverSettingsScreen() }
+        composable("caregiver_settings") { CareGiverSettingsScreen(navController, onLogout) }
     }
 }
 
@@ -125,18 +125,6 @@ fun CareGiverDashboard(navController: NavHostController) {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun CareGiverSettingsScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Caregiver Settings", fontSize = 24.sp, fontWeight = FontWeight.Bold)
     }
 }
 
