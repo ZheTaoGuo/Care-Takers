@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
@@ -36,23 +37,31 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.caresync.datasource.LoginStateDataStore
 import com.example.caresync.ui.screens.caregiver.CareGiverScreen
 import com.example.caresync.ui.screens.onboarding.OnBoardingScreen
 import com.example.caresync.ui.theme.CareSyncTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
+            val context = LocalContext.current
             var showSplash by remember { mutableStateOf(true) }
             var loginState by remember { mutableStateOf(LoginState.UNKNOWN) }
 
             // Simulate loading for 2 seconds
             LaunchedEffect(Unit) {
                 delay(1300)
-                showSplash = false
                 // TODO: Maybe get the cached login state of the app?
+                LoginStateDataStore.getLoginState(context).collect { cachedState ->
+                    loginState = cachedState
+                    showSplash = false
+                }
             }
             CareSyncTheme {
                 Crossfade(targetState = showSplash, label = "Screen Transition") { isSplash ->
@@ -61,16 +70,36 @@ class MainActivity : ComponentActivity() {
                     } else {
                         when (loginState) {
                             LoginState.PATIENT -> CareSyncApp(
-                                onLogout = { loginState = LoginState.UNKNOWN }
+                                onLogout = {
+                                    loginState = LoginState.UNKNOWN
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        LoginStateDataStore.saveLoginState(context, LoginState.UNKNOWN)
+                                    }
+                                }
                             )
 
                             LoginState.CAREGIVER -> CareGiverScreen(
-                                onLogout = { loginState = LoginState.UNKNOWN }
+                                onLogout = {
+                                    loginState = LoginState.UNKNOWN
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        LoginStateDataStore.saveLoginState(context, LoginState.UNKNOWN)
+                                    }
+                                }
                             )
 
                             LoginState.UNKNOWN -> OnBoardingScreen(
-                                onLoginCareGiver = { loginState = LoginState.CAREGIVER },
-                                onLoginPatient = { loginState = LoginState.PATIENT }
+                                onLoginCareGiver = {
+                                    loginState = LoginState.CAREGIVER
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        LoginStateDataStore.saveLoginState(context, LoginState.CAREGIVER)
+                                    }
+                                },
+                                onLoginPatient = {
+                                    loginState = LoginState.PATIENT
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        LoginStateDataStore.saveLoginState(context, LoginState.PATIENT)
+                                    }
+                                }
                             )
                         }
                     }
