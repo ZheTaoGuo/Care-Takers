@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">CareSync</string>
+    <string name="tablet">Tablet</string>
+    <string name="capsule">Capsule</string>
+    <string name="type_syrup">Syrup</string>
+    <string name="drops">Drops</string>
+    <string name="spray">Spray</string>
+    <string name="gel">Gel</string>
 </resources>
