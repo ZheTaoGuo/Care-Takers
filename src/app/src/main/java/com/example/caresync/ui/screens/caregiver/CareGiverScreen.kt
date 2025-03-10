@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -61,72 +62,91 @@ fun CareGiverDashboard(navController: NavHostController) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+            .padding(16.dp)
     ) {
-        Column {
-            AppTitle()
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 24.dp),
-                contentAlignment = Alignment.TopStart
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.leaf),
-                    contentDescription = "Decorative Image",
-                    modifier = Modifier
-                        .width(100.dp)
-                        .height(100.dp)
-                        .offset(x = (-32).dp, y = (16).dp),
-                    alpha = 0.6f
-                )
+        AppTitle()
 
-                Text(
-                    text = buildAnnotatedString {
-                        append("The right medicine, at the ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("right time")
-                        }
-                    },
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.W300,
-                    fontFamily = CustomFont.Quicksand(),
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f), // Pushes content to center
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 40.dp)
-                )
-            }
-
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                DashboardCard(
-                    title = "Profile",
-                    backgroundColor = Color(0xFFBEC9F9),
-                    iconBackgroundColor = Color(0xFF9EACE6),
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { navController.navigate("profile_screen") }
-                )
-
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-                    DashboardCard(
-                        title = "Inventory",
-                        backgroundColor = Color(0xFFC8DFDC),
-                        iconBackgroundColor = Color(0xFFAFD6D1),
-                        modifier = Modifier.weight(1f),
-                        onClick = { navController.navigate("inventory_screen") }
+                        .padding(horizontal = 16.dp, vertical = 24.dp),
+                    contentAlignment = Alignment.TopStart
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.leaf),
+                        contentDescription = "Decorative Image",
+                        modifier = Modifier
+                            .fillMaxWidth(0.3f) // Scale width to 30% of screen width
+                            .aspectRatio(1f) // Ensures it's always a square
+                            .offset(x = (-32).dp, y = (-16).dp),
+                        alpha = 0.6f
                     )
-                    DashboardCard(
-                        title = "Monitoring",
-                        backgroundColor = Color(0xFFEFE1DA),
-                        iconBackgroundColor = Color(0xFFE6CBBD),
-                        modifier = Modifier.weight(1f),
-                        onClick = { navController.navigate("monitoring_screen") }
+
+                    Text(
+                        text = buildAnnotatedString {
+                            append("The right medicine, at the ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("right time")
+                            }
+                        },
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.W300,
+                        fontFamily = CustomFont.Quicksand(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp)
                     )
+                }
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    DashboardCard(
+                        title = "Profile",
+                        backgroundColor = Color(0xFFBEC9F9),
+                        iconBackgroundColor = Color(0xFF9EACE6),
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { navController.navigate("profile_screen") }
+                    )
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        DashboardCard(
+                            title = "Inventory",
+                            backgroundColor = Color(0xFFC8DFDC),
+                            iconBackgroundColor = Color(0xFFAFD6D1),
+                            modifier = Modifier.weight(1f),
+                            onClick = { navController.navigate("inventory_screen") }
+                        )
+                        DashboardCard(
+                            title = "Monitoring",
+                            backgroundColor = Color(0xFFEFE1DA),
+                            iconBackgroundColor = Color(0xFFE6CBBD),
+                            modifier = Modifier.weight(1f),
+                            onClick = { navController.navigate("monitoring_screen") }
+                        )
+                    }
                 }
             }
         }
     }
 }
+
+
 
 @Composable
 fun CareGiverBottomNavBar(navController: NavHostController) {

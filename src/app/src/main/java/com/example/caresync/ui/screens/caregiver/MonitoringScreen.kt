@@ -127,47 +127,51 @@ fun AdherenceTab(viewModel: MonitoringViewModel) {
         plotType = PlotType.Pie
     )
 
-
     val pieChartConfig = PieChartConfig(
         isAnimationEnable = true,
         showSliceLabels = true,
         animationDuration = 1500,
     )
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
+            .aspectRatio(1f) // Ensures square shape
             .background(Color(0xFFC8DFDC), shape = RoundedCornerShape(16.dp))
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        contentAlignment = Alignment.Center
     ) {
-        PieChart(
-            modifier = Modifier
-                .width(180.dp)
-                .height(180.dp).background(color = Color.Transparent),
-            pieChartData = pieChartData,
-            pieChartConfig = pieChartConfig
-        )
+        Column(
+            modifier = Modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.SpaceEvenly, // Ensures even spacing
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Pie Chart
+            PieChart(
+                modifier = Modifier.size(150.dp).background(color = Color.Transparent),
+                pieChartData = pieChartData,
+                pieChartConfig = pieChartConfig
+            )
 
-        // Statistics below the chart
-        Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+            // Statistics
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Doses Taken", fontSize = 14.sp, color = Color.Black)
-                Text(text = "80%", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF27AE60))
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Doses Missed", fontSize = 14.sp, color = Color.Black)
-                Text(text = "20%", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFFF53844))
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Doses Taken", fontSize = 14.sp, color = Color.Black)
+                    Text(text = "80%", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF27AE60))
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Doses Missed", fontSize = 14.sp, color = Color.Black)
+                    Text(text = "20%", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFFF53844))
+                }
             }
         }
     }
@@ -176,29 +180,28 @@ fun AdherenceTab(viewModel: MonitoringViewModel) {
 @Composable
 fun MoodTab(viewModel: MonitoringViewModel) {
     val bubblePositions = remember { mutableStateListOf<Pair<Dp, Dp>>() }
-    val maxWidth = 250.dp  // Max width of the scatter area
-    val maxHeight = 200.dp // Max height of the scatter area
-    val padding = 16.dp    // Extra padding to ensure bubbles stay inside
+    val boxSize = 250.dp  // Define a fixed square size for the tab
+    val padding = 16.dp   // Extra padding to ensure bubbles stay inside
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(maxHeight + padding)
+            .aspectRatio(1f) // Ensures square shape
             .background(Color(0xFFEFE1DA), shape = RoundedCornerShape(16.dp))
             .padding(padding),
         contentAlignment = Alignment.Center
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             viewModel.moodStats.forEach { (mood, count) ->
-                val newPosition = generateNonCollidingPosition(bubblePositions, count, maxWidth, maxHeight)
+                val newPosition = generateNonCollidingPosition(bubblePositions, count, boxSize, boxSize)
                 bubblePositions.add(newPosition)
 
                 MoodBubble(
                     text = mood,
                     count = count,
                     position = newPosition,
-                    maxWidth = maxWidth,
-                    maxHeight = maxHeight
+                    maxWidth = boxSize,
+                    maxHeight = boxSize
                 )
             }
         }
