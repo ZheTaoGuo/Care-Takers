@@ -32,15 +32,7 @@ fun ProfileScreen(navController: NavHostController) {
     val quicksand = CustomFont.Quicksand()
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { AppTitle() },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
+        topBar = { AppTitle(onBackClick = { navController.navigate("caregiver_dashboard") })
         }
     ) { paddingValues ->
         Column(
