@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import com.example.caresync.model.Medication
+import com.example.caresync.datasource.MedicationDataSource
 
 class HealthCardViewModel : ViewModel() {
     private val _userProfile = MutableStateFlow(UserProfile())
     val userProfile: StateFlow<UserProfile> = _userProfile
 
-    private val _medications = MutableStateFlow<List<Medication>>(emptyList())
+    private val _medications = MutableStateFlow(MedicationDataSource.sampleMedications.toMutableList())
     val medications: StateFlow<List<Medication>> = _medications
 
     fun updateUserProfileInfo(name: String, dob: String, language: String, photoUri: Uri?, organDonation: Boolean) {

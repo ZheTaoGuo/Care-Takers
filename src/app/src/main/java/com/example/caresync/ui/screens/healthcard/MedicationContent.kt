@@ -16,12 +16,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.example.caresync.R
+import com.example.caresync.model.Medication
 
 @Composable
 fun MedicationContent(viewModel: HealthCardViewModel = viewModel()) {
     val medications by viewModel.medications.collectAsState()
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var selectedMedication by remember { mutableStateOf<Medication?>(null) }
+//    var showDeleteDialog by remember { mutableStateOf(false) }
+//    var selectedMedication by remember { mutableStateOf<Medication?>(null) }
+
+    LaunchedEffect(Unit) {
+        println("Medications List: $medications")
+    }
 
     if (medications.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize().padding(8.dp)) {
@@ -32,11 +37,7 @@ fun MedicationContent(viewModel: HealthCardViewModel = viewModel()) {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(medications) { medication ->
                     MedicationItem(
-                        medication = medication,
-                        onDelete = {
-                            selectedMedication = medication
-                            showDeleteDialog = true
-                        }
+                        medication = medication
                     )
                 }
             }
@@ -52,8 +53,10 @@ fun MedicationContent(viewModel: HealthCardViewModel = viewModel()) {
 @Composable
 fun MedicationItem(
     medication: Medication,
-    onDelete: () -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        println("Medications List: $medication.name")
+    }
     Card(
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -67,12 +70,10 @@ fun MedicationItem(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Image (if available) or default
-            val imagePainter = if (medication.imageUri != null) {
-                rememberAsyncImagePainter(medication.imageUri)
-            } else {
+//            Image (if available) or default
+            val imagePainter =
                 painterResource(id = R.drawable.default_medication) // Default image
-            }
+
             Image(
                 painter = imagePainter,
                 contentDescription = medication.name,
@@ -87,9 +88,6 @@ fun MedicationItem(
                 Text(text = "Frequency: ${medication.frequency}", style = MaterialTheme.typography.bodyMedium)
             }
 
-            IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete Medication")
-            }
         }
     }
 }

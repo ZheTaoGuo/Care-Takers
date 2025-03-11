@@ -88,9 +88,6 @@ fun HealthCardScreen(viewModel: HealthCardViewModel = viewModel()) {
                             style = MaterialTheme.typography.bodyLarge,
                             color = Purple40
                         )
-                        IconButton(onClick = { editSection = "Medications" }) {
-                            Icon(Icons.Default.Add, contentDescription = "Add Medication", tint = Purple40)
-                        }
                     }
                 }
 
