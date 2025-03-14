@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
 @Composable
 fun ClinicItem(
     clinic: Clinic,
@@ -22,10 +21,10 @@ fun ClinicItem(
     onToggleExpand: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Smooth height animation when expanding/collapsing
+
     val cardHeight by animateDpAsState(
-        targetValue = if (isExpanded) 220.dp else 130.dp, // Adjusted for spacing
-        animationSpec = tween(durationMillis = 300), // Smooth transition
+        targetValue = if (isExpanded) 260.dp else 130.dp,
+        animationSpec = tween(durationMillis = 300),
         label = "CardHeightAnimation"
     )
 
@@ -33,7 +32,7 @@ fun ClinicItem(
         modifier = modifier
             .width(260.dp)
             .height(cardHeight)
-            .clickable { onToggleExpand() }, // Triggers ViewModel toggle
+            .clickable { onToggleExpand() },
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -43,7 +42,7 @@ fun ClinicItem(
                 .fillMaxWidth()
                 .padding(10.dp)
         ) {
-            // Header Row: Clinic Name & Address
+
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Filled.Favorite,
@@ -70,7 +69,6 @@ fun ClinicItem(
                 }
             }
 
-            // Expanded Details Section
             if (isExpanded) {
                 ClinicDetails(clinic)
             }
@@ -78,13 +76,11 @@ fun ClinicItem(
     }
 }
 
-// Extracted Clinic Details for better readability
 @Composable
 fun ClinicDetails(clinic: Clinic) {
     Column {
         Spacer(modifier = Modifier.height(6.dp))
 
-        // Stock Status
         Text(
             text = "Stock: ${clinic.stockStatus}",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
@@ -97,14 +93,12 @@ fun ClinicDetails(clinic: Clinic) {
 
         Spacer(modifier = Modifier.height(2.dp))
 
-        // Contact Information
         Text(
             text = "Contact: ${clinic.phoneNumber}",
             style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
             color = MaterialTheme.colorScheme.primary
         )
 
-        // Website (Clickable)
         clinic.website?.let {
             Text(
                 text = "Visit Website",
@@ -119,7 +113,6 @@ fun ClinicDetails(clinic: Clinic) {
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Medications Available
         Text(
             text = "Available Medications:",
             style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp)
