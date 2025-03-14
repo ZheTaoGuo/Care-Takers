@@ -2,11 +2,7 @@ package com.example.caresync.ui.screens.healthcard
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,40 +10,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.rememberAsyncImagePainter
 import com.example.caresync.R
 import com.example.caresync.model.Medication
 
 @Composable
 fun MedicationContent(viewModel: HealthCardViewModel = viewModel()) {
     val medications by viewModel.medications.collectAsState()
-//    var showDeleteDialog by remember { mutableStateOf(false) }
-//    var selectedMedication by remember { mutableStateOf<Medication?>(null) }
-
-    LaunchedEffect(Unit) {
-        println("Medications List: $medications")
-    }
 
     if (medications.isEmpty()) {
+        println("Medications empty: $medications")
         Box(modifier = Modifier.fillMaxSize().padding(8.dp)) {
             Text("No medications added yet.", style = MaterialTheme.typography.bodyLarge)
         }
     } else {
+        println("Medications got something: $medications")
         Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(medications) { medication ->
-                    MedicationItem(
-                        medication = medication
-                    )
+                medications.forEach {medication ->
+                    MedicationItem(medication)
                 }
-            }
-
+        }
             Spacer(modifier = Modifier.height(16.dp))
 
             Text("Share QR Code with Clinic/Caregiver:")
             QRCodeGenerator(content = medications.joinToString { "${it.name}: ${it.dosage}, ${it.frequency}" })
         }
-    }
+//    }
 }
 
 @Composable

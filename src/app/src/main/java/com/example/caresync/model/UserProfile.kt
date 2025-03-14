@@ -1,4 +1,4 @@
-package com.example.caresync.ui.screens.healthcard
+package com.example.caresync.model
 
 import android.net.Uri
 

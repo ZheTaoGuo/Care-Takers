@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.example.caresync.model.Medication
 import com.example.caresync.datasource.MedicationDataSource
+import com.example.caresync.model.UserProfile
 
 class HealthCardViewModel : ViewModel() {
     private val _userProfile = MutableStateFlow(UserProfile())

@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import coil3.compose.rememberAsyncImagePainter
 import com.example.caresync.R
+import com.example.caresync.model.UserProfile
 
 @Composable
 fun ProfileContent(userProfile: UserProfile) {
