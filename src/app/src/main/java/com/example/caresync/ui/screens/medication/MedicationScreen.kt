@@ -11,12 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.caresync.BottomNavItem
 import com.example.caresync.CareSyncApp
 import com.example.caresync.ui.screens.calendar.CalendarViewModel
 
 @Composable
-fun MedicationScreen(viewModel: MedicationViewModel) {
+fun MedicationScreen(viewModel: MedicationViewModel = viewModel()) {
     val uiState by viewModel.MedicationUIState.collectAsState()
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text( "Medication\nScreen", textAlign = TextAlign.Center, style = MaterialTheme.typography.headlineMedium )

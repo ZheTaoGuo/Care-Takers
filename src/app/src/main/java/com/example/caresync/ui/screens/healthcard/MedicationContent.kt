@@ -32,7 +32,7 @@ fun MedicationContent(viewModel: HealthCardViewModel = viewModel()) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text("Share QR Code with Clinic/Caregiver:")
-            QRCodeGenerator(content = medications.joinToString { "${it.name}: ${it.dosage}, ${it.frequency}" })
+            QRCodeGenerator(content = medications.joinToString { "${it.name}: ${it.amtPerDosage}, ${it.frequency}" })
         }
 //    }
 }
@@ -71,7 +71,7 @@ fun MedicationItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = medication.name, style = MaterialTheme.typography.headlineSmall)
-                Text(text = "Dosage: ${medication.dosage}", style = MaterialTheme.typography.bodyMedium)
+                Text(text = "Dosage: ${medication.amtPerDosage}", style = MaterialTheme.typography.bodyMedium)
                 Text(text = "Frequency: ${medication.frequency}", style = MaterialTheme.typography.bodyMedium)
             }
 

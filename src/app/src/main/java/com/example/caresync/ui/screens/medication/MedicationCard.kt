@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.caresync.R
+import com.example.caresync.model.Frequency
 import com.example.caresync.model.Medication
 import com.example.caresync.model.MedicationType
 import java.util.Date
@@ -60,7 +61,7 @@ fun MedicationCard(
                     color = Color(boxColor)
                 )
 
-                val doseAndType = "${medication.dosage} ${
+                val doseAndType = "${medication.totalDosage} ${
                     stringResource(
                         when (medication.type) {
                             MedicationType.TABLET -> R.string.tablet
@@ -68,7 +69,6 @@ fun MedicationCard(
                             MedicationType.SYRUP -> R.string.type_syrup
                             MedicationType.DROPS -> R.string.drops
                             MedicationType.SPRAY -> R.string.spray
-                            MedicationType.GEL -> R.string.gel
                         }
                     ).lowercase()
                 }"
@@ -96,7 +96,6 @@ fun MedicationCard(
                             MedicationType.SYRUP -> R.drawable.ic_syrup
                             MedicationType.DROPS -> R.drawable.ic_drops
                             MedicationType.SPRAY -> R.drawable.ic_spray
-                            MedicationType.GEL -> R.drawable.ic_gel
                         }
                     ),
                     contentDescription = stringResource(
@@ -106,7 +105,6 @@ fun MedicationCard(
                             MedicationType.SYRUP -> R.string.type_syrup
                             MedicationType.DROPS -> R.string.drops
                             MedicationType.SPRAY -> R.string.spray
-                            MedicationType.GEL -> R.string.gel
                         }
                     ),
                     modifier = Modifier.size(42.dp),
@@ -124,12 +122,10 @@ private fun MedicationCardTakenPreview() {
         Medication(
             id = 123L,
             name = "Medication Card Sample",
-            dosage = 1,
-            frequency = "2",
+            frequency = Frequency.THRICE,
+            amtPerDosage = 1,
+            totalDosage = 10,
             startDate = Date(),
-            endDate = Date(),
-            medicationTime = Date(),
-            medicationTaken = true,
             type = MedicationType.TABLET
         )
     ) { }
