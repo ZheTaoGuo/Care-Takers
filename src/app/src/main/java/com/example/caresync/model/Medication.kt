@@ -3,18 +3,32 @@ package com.example.caresync.model
 import android.icu.util.Calendar
 import java.util.Date
 
+enum class Frequency{
+    ONCE,
+    TWICE,
+    THRICE
+};
+
+data class MedicationUIState(
+    val medications: List<Medication> = emptyList(),
+    val selectedMedication: Medication? = null,
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
+)
+
 data class Medication (
     val id: Long = 0,
     val name: String,
-    val dosage: Int,
-    val frequency: String, // NOTE(RAYNER): This should REALLY be an enum. Also needs to factor in medications with before/after meals.
-                           // NOTE(RAYNER): When this is changed, will have to affect MedicationDosage generation as well!!
+    val frequency: Frequency,
+    val amtPerDosage: Int,
+    val totalDosage: Int,
     val startDate: Date,
-    val endDate: Date,
-    val medicationTaken: Boolean,
-    val medicationTime: Date,
-    val type: MedicationType = MedicationType.getDefault()
-)
+    val type: MedicationType
+) {
+    fun getMeasurementType(): String {
+        return type.displayName
+    }
+}
 
 data class MedicationDosage(
     val id: Long = 0,

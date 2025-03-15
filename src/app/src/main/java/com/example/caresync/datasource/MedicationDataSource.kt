@@ -1,5 +1,6 @@
 package com.example.caresync.datasource
 
+import com.example.caresync.model.Frequency
 import android.icu.util.Calendar
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -10,12 +11,15 @@ import java.util.UUID
 
 object MedicationDataSource {
     val dateFormatter = SimpleDateFormat("yyyy-MM-dd")
-    val timeFormatter = SimpleDateFormat("HH:mm")
     val sampleMedications = listOf(
-        Medication(1, "Aspirin", 81, "Daily", dateFormatter.parse("2025-02-28"), dateFormatter.parse("2025-03-31"), medicationTaken = true, medicationTime = timeFormatter.parse("08:00"), type= MedicationType.getDefault()),
-        Medication(2, "Metformin", 500, "Daily", dateFormatter.parse("2025-05-31"), dateFormatter.parse("2025-07-31"), medicationTaken = true, medicationTime = timeFormatter.parse("13:00"), type= MedicationType.GEL),
-        Medication(3, "Lisinopril", 800, "Twice daily", dateFormatter.parse("2025-12-01"), dateFormatter.parse("2025-12-31"), medicationTaken = true, medicationTime = timeFormatter.parse("12:00"), type= MedicationType.SYRUP),
+        Medication(1, "Aspirin", Frequency.ONCE, 2, 10, dateFormatter.parse("2025-03-31"), type=MedicationType.TABLET),
+        Medication(2, "Prospan Cough Syrup", Frequency.TWICE, 15,100, dateFormatter.parse("2025-03-31"), type= MedicationType.SYRUP),
+        Medication(3, "Lisinopril", Frequency.THRICE,2, 14, dateFormatter.parse("2025-03-18"), type= MedicationType.TABLET),
+        Medication(4, "Amoxicillin", Frequency.THRICE, 1, 30, dateFormatter.parse("2025-03-10"), type= MedicationType.CAPSULE),
+        Medication(5, "Vitamin D Drops", Frequency.THRICE, 2, 30, dateFormatter.parse("2025-03-05"), type= MedicationType.DROPS),
+        Medication(6, "Salbutamol Inhaler", Frequency.THRICE, 1, 200, dateFormatter.parse("2025-03-01"), type= MedicationType.SPRAY)
         )
+
 
     val generatedDosages: List<MedicationDosage> = generateDosages()
 
@@ -25,17 +29,18 @@ object MedicationDataSource {
 
         for (med in sampleMedications) {
             calendar.time = med.startDate
-            while (!calendar.time.after(med.endDate)) {
-                when (med.frequency) {
-                    // TODO(RAYNER): Will need to beef up this, once Zhe Tao changes frequency to an enum.
-                    "Daily" -> dosages.add(createDosage(med, calendar.time, 12, 0)) // Default to 12:00 PM
-                    "Twice daily" -> {
-                        dosages.add(createDosage(med, calendar.time, 8, 0)) // Morning dose at 8:00 AM
-                        dosages.add(createDosage(med, calendar.time, 20, 0)) // Evening dose at 8:00 PM
-                    }
-                }
-                calendar.add(Calendar.DATE, 1) // Move to next day
-            }
+
+//            while (!calendar.time.after(med.endDate)) {
+//                when (med.frequency) {
+//                    // TODO(RAYNER): Will need to beef up this, once Zhe Tao changes frequency to an enum.
+//                    "Daily" -> dosages.add(createDosage(med, calendar.time, 12, 0)) // Default to 12:00 PM
+//                    "Twice daily" -> {
+//                        dosages.add(createDosage(med, calendar.time, 8, 0)) // Morning dose at 8:00 AM
+//                        dosages.add(createDosage(med, calendar.time, 20, 0)) // Evening dose at 8:00 PM
+//                    }
+//                }
+//                calendar.add(Calendar.DATE, 1) // Move to next day
+//            }
         }
         return dosages
     }

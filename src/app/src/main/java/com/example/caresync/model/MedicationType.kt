@@ -3,17 +3,12 @@ package com.example.caresync.model
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 
-enum class MedicationType {
-    TABLET,
-    CAPSULE,
-    SYRUP,
-    DROPS,
-    SPRAY,
-    GEL;
-
-    companion object {
-        fun getDefault() = TABLET
-    }
+enum class MedicationType(val displayName: String) {
+    TABLET("pills"),
+    CAPSULE("capsules"),
+    SYRUP("ml"),
+    DROPS("drops"),
+    SPRAY("sprays");
 
     @Composable
     fun getCardColor() = when (this) {
@@ -41,11 +36,6 @@ enum class MedicationType {
             MaterialTheme.colorScheme.errorContainer.value,
             MaterialTheme.colorScheme.error.value,
             MaterialTheme.colorScheme.onErrorContainer.value
-        )
-        GEL -> Triple(
-            MaterialTheme.colorScheme.inversePrimary.value,
-            MaterialTheme.colorScheme.primary.value,
-            MaterialTheme.colorScheme.onPrimaryContainer.value
         )
     }
 }
