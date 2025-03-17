@@ -32,9 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.caresync.datasource.CalendarDataSource
 import com.example.caresync.datasource.MedicationDataSource
-import com.example.caresync.model.CalendarEntry
 import com.example.caresync.model.MedicationDosage
 import kotlinx.coroutines.delay
 import java.util.Calendar
@@ -48,7 +46,7 @@ fun getCurrentTime(): Pair<Int, Int> {
 
 // NOTE(RAYNER): Need to assume that this calendar doesn't get anything beyond the date it has.
 @Composable
-fun DayCalendarView(viewModel: CalendarViewModel, events: List<CalendarEntry>, dosagesForDay: List<MedicationDosage>) {
+fun DayCalendarView(viewModel: CalendarViewModel, dosagesForDay: List<MedicationDosage>) {
     val uiState by viewModel.uiState.collectAsState()
 
     var currentTime by remember { mutableStateOf(getCurrentTime()) }
@@ -107,16 +105,6 @@ fun DayCalendarView(viewModel: CalendarViewModel, events: List<CalendarEntry>, d
                                 .padding(start = 8.dp, end = 8.dp, top = 8.dp)
                         )
 
-//                        events.find { it.hour == hour }?.let { event ->
-//                            CalendarBlock(
-//                                title = event.title,
-//                                hour = event.hour,
-//                                min = event.min,
-//                                isDone = event.completed,
-//                                minuteHeight = uiState.minuteHeight
-//                            )
-//                        }
-
                         dosagesForDay.find { it.hour == hour }?.let { dosage ->
                             CalendarBlock(
                                 title = dosage.srcMedication.name,
@@ -163,10 +151,10 @@ fun DayCalendarViewPreview() {
     val currentDate: Date = Calendar.getInstance().time
     val dosagesForDate = MedicationDataSource.getDosagesForDate(currentDate)
 
-//    Box { For debugging
-        DayCalendarView(viewModel, CalendarDataSource.sampleEvents, dosagesForDate)
+//    Box { // FOR DEBUGGING
+        DayCalendarView(viewModel, dosagesForDate)
 
-        // FOR DEBUGGING
+// FOR DEBUGGING
 //        Column {
 //            Text(text = "CurDate: " + currentDate)
 //            Text(text = "Dosages: " + dosagesByDate)

@@ -9,14 +9,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.caresync.BottomNavItem
 import com.example.caresync.CareSyncApp
+import com.example.caresync.datasource.MedicationDataSource
+import java.util.Calendar
+import java.util.Date
 
 @Composable
 fun CalendarScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Calendar\nScreen", textAlign = TextAlign.Center, style = MaterialTheme.typography.headlineMedium)
-    }
+    val viewModel: CalendarViewModel = viewModel()
+    val currentDate: Date = Calendar.getInstance().time
+    DayCalendarView(viewModel = viewModel, dosagesForDay = MedicationDataSource.getDosagesForDate(currentDate))
 }
 
 @Preview
