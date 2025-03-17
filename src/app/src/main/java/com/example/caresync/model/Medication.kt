@@ -1,6 +1,8 @@
 package com.example.caresync.model
 
 import android.icu.util.Calendar
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.Date
 
 enum class Frequency{
@@ -16,8 +18,9 @@ data class MedicationUIState(
     val errorMessage: String? = null
 )
 
+@Entity(tableName = "medications")
 data class Medication (
-    val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val frequency: Frequency,
     val amtPerDosage: Int,
