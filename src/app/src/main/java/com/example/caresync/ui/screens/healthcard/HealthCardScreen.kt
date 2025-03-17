@@ -109,7 +109,7 @@ fun HealthCardScreen(viewModel: HealthCardViewModel = viewModel()) {
 
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun HealthCardScreenPreview() {
     CareSyncApp({}, BottomNavItem.HealthCard.route)

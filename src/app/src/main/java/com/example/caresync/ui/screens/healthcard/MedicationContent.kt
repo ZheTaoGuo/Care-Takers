@@ -49,9 +49,9 @@ fun MedicationItem(medication: Medication, modifier: Modifier = Modifier) {
     Card(
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.LightGray),
-        modifier = modifier.padding(4.dp)
+        modifier = modifier.padding(4.dp).height(115.dp)
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(modifier = Modifier.padding(12.dp).fillMaxHeight(), verticalArrangement = Arrangement.SpaceEvenly) {
             Text(text = medication.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
             Text(text = "Dosage: ${medication.amtPerDosage}", style = MaterialTheme.typography.bodyMedium)
             Text(text = "Frequency: ${medication.frequency}", style = MaterialTheme.typography.bodyMedium)
