@@ -65,6 +65,16 @@ fun HealthCardScreen(viewModel: HealthCardViewModel = viewModel()) {
                     )
                 }
 
+
+                item {
+                    ProfileSection(
+                        title = "Emergency Contacts",
+                        content = if (userProfile.emergencyContacts.isEmpty()) "No contacts added"
+                        else userProfile.emergencyContacts.joinToString("\n") { "${it.relationship}: ${it.name} (${it.phoneNumber})" },
+                        onEdit = { editSection = "Emergency Contacts" }
+                    )
+                }
+
                 item {
                     ProfileSection(
                         title = "Additional Information",
@@ -95,6 +105,9 @@ fun HealthCardScreen(viewModel: HealthCardViewModel = viewModel()) {
         }
     }
 }
+
+
+
 
 @Preview
 @Composable

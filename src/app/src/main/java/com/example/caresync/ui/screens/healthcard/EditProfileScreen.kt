@@ -4,10 +4,15 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -165,6 +170,100 @@ fun EditProfileScreen(
                         Text("Save")
                     }
                 }
+            }
+
+            "Emergency Contacts" -> {
+                if (userProfile.emergencyContacts.isEmpty()) {
+                    Text(
+                        text = "No contacts added",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        itemsIndexed(userProfile.emergencyContacts) { index, contact ->
+                            Card(
+                                colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "${contact.relationship}: ${contact.name} (${contact.phoneNumber})",
+                                        modifier = Modifier.weight(1f),
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    IconButton(onClick = { viewModel.removeEmergencyContact(index) }) {
+                                        Icon(
+                                            Icons.Default.Delete,
+                                            contentDescription = "Remove Contact",
+                                            tint = Color.Red
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.size(8.dp))
+
+                var relationship by remember { mutableStateOf("") }
+                var contactName by remember { mutableStateOf("") }
+                var phoneNumber by remember { mutableStateOf("") }
+
+                    OutlinedTextField(
+                        value = relationship,
+                        onValueChange = { relationship = it },
+                        label = { Text("Relationship") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = contactName,
+                        onValueChange = { contactName = it },
+                        label = { Text("Name") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = phoneNumber,
+                        onValueChange = { phoneNumber = it },
+                        label = { Text("Phone Number") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.size(8.dp))
+
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Button(
+                            onClick = {
+                                if (relationship.isNotBlank() && contactName.isNotBlank() && phoneNumber.isNotBlank()) {
+                                    viewModel.addEmergencyContact(
+                                        relationship,
+                                        contactName,
+                                        phoneNumber
+                                    )
+                                }
+                            },
+                            modifier = Modifier.weight(1f).padding(end = 8.dp)
+                        ) {
+                            Text("Add Contact")
+                        }
+                        Button(onClick = onBack, modifier = Modifier.weight(1f)) {
+                        Text("Save")
+                        }
+                    }
             }
         }
     }

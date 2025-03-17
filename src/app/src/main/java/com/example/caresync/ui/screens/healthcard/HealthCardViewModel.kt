@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.example.caresync.model.Medication
 import com.example.caresync.datasource.MedicationDataSource
+import com.example.caresync.model.EmergencyContact
 import com.example.caresync.model.UserProfile
 
 class HealthCardViewModel : ViewModel() {
@@ -16,6 +17,7 @@ class HealthCardViewModel : ViewModel() {
 
     private val _medications = MutableStateFlow(MedicationDataSource.sampleMedications.toMutableList())
     val medications: StateFlow<List<Medication>> = _medications
+
 
     fun updateUserProfileInfo(name: String, dob: String, language: String, photoUri: Uri?, organDonation: Boolean) {
         viewModelScope.launch {
@@ -56,4 +58,20 @@ class HealthCardViewModel : ViewModel() {
             )
         }
     }
+
+    fun addEmergencyContact(relationship: String, name: String, phoneNumber: String) {
+        viewModelScope.launch {
+            val updatedContacts = _userProfile.value.emergencyContacts + EmergencyContact(relationship, name, phoneNumber)
+            _userProfile.value = _userProfile.value.copy(emergencyContacts = updatedContacts)
+        }
+    }
+
+    fun removeEmergencyContact(index: Int) {
+        viewModelScope.launch {
+            val updatedContacts = _userProfile.value.emergencyContacts.toMutableList()
+            updatedContacts.removeAt(index)
+            _userProfile.value = _userProfile.value.copy(emergencyContacts = updatedContacts)
+        }
+    }
+
 }

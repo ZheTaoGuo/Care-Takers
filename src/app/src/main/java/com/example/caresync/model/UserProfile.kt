@@ -13,5 +13,12 @@ data class UserProfile(
     val conditions: String = "--",
     val height: Double = 0.0,
     val weight: Double = 0.0,
-    val bloodType: String = "--"
+    val bloodType: String = "--",
+    val emergencyContacts: List<EmergencyContact> = emptyList()
+)
+
+data class EmergencyContact(
+    val relationship: String,
+    val name: String,
+    val phoneNumber: String
 )
