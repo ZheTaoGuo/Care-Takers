@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -16,6 +18,18 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        val localProperties = Properties()
+        val localFile = rootProject.file("local.properties")
+
+        if (localFile.exists()) {
+            localProperties.load(localFile.inputStream())
+        }
+
+        val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY", "")
+
+        buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
+
+        resValue("string", "google_maps_key", mapsApiKey)
     }
 
     buildTypes {
@@ -36,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
