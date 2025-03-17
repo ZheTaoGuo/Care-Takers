@@ -18,11 +18,12 @@ import java.util.Date
 
 @Composable
 fun CalendarScreen() {
-    val viewModel: CalendarViewModel = viewModel()
+    val viewModel: CalendarViewModel = viewModel(factory = CalendarViewModel.factory)
     val currentDate: Date = Calendar.getInstance().time
-    DayCalendarView(viewModel = viewModel, dosagesForDay = MedicationDataSource.getDosagesForDate(currentDate))
+    DayCalendarView(viewModel = viewModel)
 }
 
+// TODO(RAYNER): Create fake view model and DAO since factory in preview doesn't work.
 @Preview
 @Composable
 fun CalendarScreenPreview() {

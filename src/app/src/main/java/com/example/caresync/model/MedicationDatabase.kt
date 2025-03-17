@@ -10,7 +10,7 @@ import com.example.caresync.datasource.MedicationDataSource
 import com.example.caresync.utils.Converters
 import java.util.concurrent.Executors
 
-@Database(entities = [Medication::class], version = 1, exportSchema = false)
+@Database(entities = [Medication::class, MedicationDosage::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class MedicationDatabase : RoomDatabase() {
     abstract fun medicationDao(): MedicationDao
@@ -29,11 +29,15 @@ abstract class MedicationDatabase : RoomDatabase() {
                     .addCallback(object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
-                            // Populate the database on first run
                             Executors.newSingleThreadExecutor().execute {
-                                val dao = getInstance(context).medicationDao()
-                                if (dao.getMedicationCount() == 0) {
-                                    dao.insertAll(MedicationDataSource.sampleMedications)
+                                INSTANCE?.let { database ->
+                                    val dao = database.medicationDao()
+                                    if (dao.getMedicationCount() == 0) {
+                                        val repository = MedicationRepository(dao)
+                                        for (medication in MedicationDataSource.sampleMedications) {
+                                            repository.insertMedicationWithDosages(medication)
+                                        }
+                                    }
                                 }
                             }
                         }

@@ -2,6 +2,8 @@ package com.example.caresync.model
 
 import android.icu.util.Calendar
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.Date
 
@@ -11,6 +13,7 @@ enum class Frequency{
     THRICE
 };
 
+// NOTE(RAYNER): Hey this should be maybe in the UI class instead? So don't confuse with models.
 data class MedicationUIState(
     val medications: List<Medication> = emptyList(),
     val selectedMedication: Medication? = null,
@@ -33,12 +36,22 @@ data class Medication (
     }
 }
 
+@Entity(
+    tableName = "medicationDosages",
+    foreignKeys = [ForeignKey(
+        entity = Medication::class,
+        parentColumns = ["id"],
+        childColumns = ["medicationId"],
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index(value = ["medicationId"])] // Indexing for performance
+)
 data class MedicationDosage(
-    val id: Long = 0,
-    val srcMedication: Medication,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val medicationId: Long,  // References Medication
     val isDosageTaken: Boolean,
     val scheduledDatetime: Date,
-    val isRescheduled: Boolean,
+    val isRescheduled: Boolean
 ) {
     val hour: Int
         get() = Calendar.getInstance().apply { time = scheduledDatetime }.get(Calendar.HOUR_OF_DAY)

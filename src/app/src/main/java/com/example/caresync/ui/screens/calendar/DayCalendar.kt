@@ -46,8 +46,9 @@ fun getCurrentTime(): Pair<Int, Int> {
 
 // NOTE(RAYNER): Need to assume that this calendar doesn't get anything beyond the date it has.
 @Composable
-fun DayCalendarView(viewModel: CalendarViewModel, dosagesForDay: List<MedicationDosage>) {
+fun DayCalendarView(viewModel: CalendarViewModel) {
     val uiState by viewModel.uiState.collectAsState()
+    val dosagesForDay by viewModel.getDosagesForDate(Calendar.getInstance().time).collectAsState(initial = emptyList())
 
     var currentTime by remember { mutableStateOf(getCurrentTime()) }
     // Update time every minute
@@ -107,7 +108,7 @@ fun DayCalendarView(viewModel: CalendarViewModel, dosagesForDay: List<Medication
 
                         dosagesForDay.find { it.hour == hour }?.let { dosage ->
                             CalendarBlock(
-                                title = dosage.srcMedication.name,
+                                title = "MedID: ${dosage.medicationId}", // TODO(RAYNER): Grab the actual med name
                                 hour = dosage.hour,
                                 min = dosage.minute,
                                 isDone = dosage.isDosageTaken,
@@ -144,15 +145,14 @@ fun CalendarBlock(title: String, hour: Int, min: Int, isDone: Boolean, minuteHei
 }
 
 
+// TODO(RAYNER): Create fake view model and DAO since factory in preview doesn't work.
 @Preview(showBackground = true)
 @Composable
 fun DayCalendarViewPreview() {
-    val viewModel: CalendarViewModel = viewModel()
-    val currentDate: Date = Calendar.getInstance().time
-    val dosagesForDate = MedicationDataSource.getDosagesForDate(currentDate)
+    val viewModel: CalendarViewModel = viewModel(factory = CalendarViewModel.factory)
 
 //    Box { // FOR DEBUGGING
-        DayCalendarView(viewModel, dosagesForDate)
+        DayCalendarView(viewModel)
 
 // FOR DEBUGGING
 //        Column {

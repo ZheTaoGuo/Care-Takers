@@ -1,0 +1,50 @@
+package com.example.caresync.model
+
+import android.icu.util.Calendar
+import java.util.Date
+
+class MedicationRepository(private val medicationDao: MedicationDao) {
+    fun insertMedicationWithDosages(medication: Medication) {
+        val medicationId = medicationDao.insertMedication(medication)
+        val dosages = generateDosages(medication, medicationId)
+        medicationDao.insertAllDosages(dosages)
+    }
+
+    private fun generateDosages(medication: Medication, medicationId: Long): List<MedicationDosage> {
+        val dosages = mutableListOf<MedicationDosage>()
+        val calendar = Calendar.getInstance().apply { time = medication.startDate }
+        var remainingDosage = medication.totalDosage
+
+        while (remainingDosage > 0) {
+            val dosesForTheDay = when (medication.frequency) {
+                Frequency.ONCE -> listOf(12 to 0)  // 12:00 PM
+                Frequency.TWICE -> listOf(8 to 0, 20 to 0)  // 8:00 AM, 8:00 PM
+                Frequency.THRICE -> listOf(8 to 0, 14 to 0, 20 to 0)  // 8:00 AM, 2:00 PM, 8:00 PM
+            }
+
+            for ((hour, minute) in dosesForTheDay) {
+                if (remainingDosage <= 0) break
+                dosages.add(createDosage(medicationId, calendar.time, hour, minute))
+                remainingDosage--
+            }
+
+            calendar.add(Calendar.DATE, 1)  // Move to next day
+        }
+        return dosages
+    }
+
+    private fun createDosage(medicationId: Long, date: Date, hour: Int, minute: Int): MedicationDosage {
+        val scheduledTime = Calendar.getInstance().apply {
+            time = date
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+        }.time
+
+        return MedicationDosage(
+            medicationId = medicationId,
+            isDosageTaken = false,
+            scheduledDatetime = scheduledTime,
+            isRescheduled = false
+        )
+    }
+}
