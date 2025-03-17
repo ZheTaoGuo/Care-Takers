@@ -25,22 +25,26 @@ object MedicationDataSource {
 
     private fun generateDosages(): List<MedicationDosage> {
         val dosages = mutableListOf<MedicationDosage>()
-        val calendar = Calendar.getInstance()
 
         for (med in sampleMedications) {
-            calendar.time = med.startDate
+            val calendar = Calendar.getInstance().apply { time = med.startDate }
+            var remainingDosage = med.totalDosage
 
-//            while (!calendar.time.after(med.endDate)) {
-//                when (med.frequency) {
-//                    // TODO(RAYNER): Will need to beef up this, once Zhe Tao changes frequency to an enum.
-//                    "Daily" -> dosages.add(createDosage(med, calendar.time, 12, 0)) // Default to 12:00 PM
-//                    "Twice daily" -> {
-//                        dosages.add(createDosage(med, calendar.time, 8, 0)) // Morning dose at 8:00 AM
-//                        dosages.add(createDosage(med, calendar.time, 20, 0)) // Evening dose at 8:00 PM
-//                    }
-//                }
-//                calendar.add(Calendar.DATE, 1) // Move to next day
-//            }
+            while (remainingDosage > 0) {
+                val dosesForTheDay = when (med.frequency) {
+                    Frequency.ONCE -> listOf(12 to 0)  // 12:00 PM
+                    Frequency.TWICE -> listOf(8 to 0, 20 to 0)  // 8:00 AM, 8:00 PM
+                    Frequency.THRICE -> listOf(8 to 0, 14 to 0, 20 to 0)  // 8:00 AM, 2:00 PM, 8:00 PM
+                }
+
+                for ((hour, minute) in dosesForTheDay) {
+                    if (remainingDosage <= 0) break
+                    dosages.add(createDosage(med, calendar.time, hour, minute))
+                    remainingDosage--
+                }
+
+                calendar.add(Calendar.DATE, 1)  // Move to next day
+            }
         }
         return dosages
     }

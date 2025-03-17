@@ -161,9 +161,10 @@ fun CalendarBlock(title: String, hour: Int, min: Int, isDone: Boolean, minuteHei
 fun DayCalendarViewPreview() {
     val viewModel: CalendarViewModel = viewModel()
     val currentDate: Date = Calendar.getInstance().time
-    val dosagesByDate = MedicationDataSource.getDosagesForDate(currentDate)
+    val dosagesForDate = MedicationDataSource.getDosagesForDate(currentDate)
+
 //    Box { For debugging
-        DayCalendarView(viewModel, CalendarDataSource.sampleEvents, dosagesByDate)
+        DayCalendarView(viewModel, CalendarDataSource.sampleEvents, dosagesForDate)
 
         // FOR DEBUGGING
 //        Column {
