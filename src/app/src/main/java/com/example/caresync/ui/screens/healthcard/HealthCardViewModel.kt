@@ -10,9 +10,10 @@ import com.example.caresync.model.Medication
 import com.example.caresync.datasource.MedicationDataSource
 import com.example.caresync.model.EmergencyContact
 import com.example.caresync.model.UserProfile
+import com.example.caresync.datasource.UserDataSource
 
 class HealthCardViewModel : ViewModel() {
-    private val _userProfile = MutableStateFlow(UserProfile())
+    private val _userProfile = MutableStateFlow(UserDataSource.sampleUserProfile)
     val userProfile: StateFlow<UserProfile> = _userProfile
 
     private val _medications = MutableStateFlow(MedicationDataSource.sampleMedications.toMutableList())
