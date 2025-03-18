@@ -54,6 +54,11 @@ class CalendarViewModel(private val medicationDao: MedicationDao) : ViewModel() 
         return medicationDao.getDosagesForDate(start, end)
     }
 
+    suspend fun getMedicationName(medicationId: Long): String {
+        val medication = medicationDao.getMedicationById(medicationId)
+        return medication?.name ?: "NULL"
+    }
+
     companion object {
         val factory : ViewModelProvider.Factory = viewModelFactory {
             initializer {

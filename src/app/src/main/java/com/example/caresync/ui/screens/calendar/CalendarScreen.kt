@@ -29,6 +29,9 @@ fun CalendarScreen(
         minuteHeight = uiState.minuteHeight,
         startHour = uiState.startHour,
         endHour = uiState.endHour,
+        getMedicationName = { medicationId ->
+            viewModel.getMedicationName(medicationId) // Call your ViewModel's function to get the name
+        }
     )
 }
 

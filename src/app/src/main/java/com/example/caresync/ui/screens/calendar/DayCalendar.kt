@@ -51,7 +51,8 @@ fun DayCalendarView(
     dosagesForDay: List<MedicationDosage>,
     minuteHeight: Float,
     startHour: Int,
-    endHour: Int
+    endHour: Int,
+    getMedicationName: suspend (Long)->String
 ) {
     var currentTime by remember { mutableStateOf(getCurrentTime()) }
     // Update time every minute
@@ -110,13 +111,27 @@ fun DayCalendarView(
                         )
 
                         dosagesForDay.find { it.hour == hour }?.let { dosage ->
-                            CalendarBlock(
-                                title = "MedID: ${dosage.medicationId}", // TODO(RAYNER): Grab the actual med name
-                                hour = dosage.hour,
-                                min = dosage.minute,
-                                isDone = dosage.isDosageTaken,
-                                minuteHeight = minuteHeight
-                            )
+                            // Fetch the medication name asynchronously
+                            var medicationName by remember { mutableStateOf<String?>(null) }
+
+                            // Call getMedicationName only when dosage changes
+                            LaunchedEffect(dosage.medicationId) {
+                                medicationName = getMedicationName(dosage.medicationId)
+                            }
+
+                            // Show the dosage block only when medication name is available
+                            medicationName?.let { name ->
+                                CalendarBlock(
+                                    title = name,
+                                    hour = dosage.hour,
+                                    min = dosage.minute,
+                                    isDone = dosage.isDosageTaken,
+                                    minuteHeight = minuteHeight
+                                )
+                            } ?: run {
+                                // You can show a loading spinner or something until the medication name is loaded
+                                Text("Loading...")
+                            }
                         }
                     }
                 }
@@ -156,7 +171,8 @@ fun DayCalendarViewPreview() {
         dosagesForDay = MedicationDataSource.sampleMedicationDosages,
         minuteHeight = 1f,
         startHour = 8,
-        endHour = 22
+        endHour = 22,
+        getMedicationName = { id: Long -> "TEST_MED_NAME_${id}" }
     )
 
 // FOR DEBUGGING

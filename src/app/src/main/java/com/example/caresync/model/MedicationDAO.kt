@@ -10,13 +10,17 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MedicationDao {
     @Query("SELECT * FROM medications")
-    fun getAllMedications(): List<Medication>
+    fun getAllMedications(): Flow<List<Medication>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(medications: List<Medication>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMedication(medication: Medication): Long
+
+    @Query("SELECT * FROM medications WHERE id = :medicationId LIMIT 1")
+    suspend fun getMedicationById(medicationId: Long): Medication?
+
 
 
 
@@ -34,7 +38,7 @@ interface MedicationDao {
     fun deleteDosagesForMedication(medicationId: Long)
 
     @Query("SELECT * FROM medicationDosages")
-    fun getAllDosages(): List<MedicationDosage>
+    fun getAllDosages(): Flow<List<MedicationDosage>>
 
     @Query("UPDATE medicationDosages SET isDosageTaken = :isTaken WHERE id = :dosageId")
     fun updateDosageStatus(dosageId: Long, isTaken: Boolean)
