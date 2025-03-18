@@ -11,10 +11,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.caresync.model.Medication
+import java.util.Calendar
 
 @Composable
-fun MedicationContent(viewModel: HealthCardViewModel = viewModel()) {
-    val medications by viewModel.medications.collectAsState()
+fun MedicationContent(viewModel: HealthCardViewModel) {
+    val medications by viewModel.getAllMedications().collectAsState(initial = emptyList())
 
     if (medications.isEmpty()) {
         println("Medications empty: $medications")

@@ -19,7 +19,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import com.example.caresync.ui.theme.*
 
 @Composable
-fun HealthCardScreen(viewModel: HealthCardViewModel = viewModel()) {
+fun HealthCardScreen(
+    viewModel: HealthCardViewModel = viewModel(factory = HealthCardViewModel.factory)
+) {
     var editSection by remember { mutableStateOf<String?>(null) }
     val userProfile by viewModel.userProfile.collectAsState()
 
