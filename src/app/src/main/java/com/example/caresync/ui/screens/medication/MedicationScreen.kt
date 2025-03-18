@@ -12,9 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.caresync.BottomNavItem
-import com.example.caresync.CareSyncApp
-import com.example.caresync.ui.screens.calendar.CalendarViewModel
+import com.example.caresync.ui.screens.BottomNavItem
+import com.example.caresync.ui.screens.CareSyncPatientAppScreens
 
 @Composable
 fun MedicationScreen(viewModel: MedicationViewModel = viewModel()) {
@@ -28,5 +27,5 @@ fun MedicationScreen(viewModel: MedicationViewModel = viewModel()) {
 @Preview
 @Composable
 fun MedicationScreenPreview() {
-    CareSyncApp({}, BottomNavItem.Medication.route)
+    CareSyncPatientAppScreens({}, BottomNavItem.Medication.route)
 }

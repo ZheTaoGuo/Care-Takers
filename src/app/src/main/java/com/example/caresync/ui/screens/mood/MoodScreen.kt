@@ -9,8 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.caresync.BottomNavItem
-import com.example.caresync.CareSyncApp
+import com.example.caresync.ui.screens.BottomNavItem
+import com.example.caresync.ui.screens.CareSyncPatientAppScreens
 
 @Composable
 fun MoodScreen() {
@@ -22,5 +22,5 @@ fun MoodScreen() {
 @Preview
 @Composable
 fun MoodScreenPreview() {
-    CareSyncApp({}, BottomNavItem.Mood.route)
+    CareSyncPatientAppScreens({}, BottomNavItem.Mood.route)
 }

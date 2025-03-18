@@ -1,4 +1,4 @@
-package com.example.caresync
+package com.example.caresync.ui.screens
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -37,7 +37,7 @@ import com.example.caresync.ui.screens.settings.SettingsScreen
 
 @Composable
 // TODO: Need to decide what is the default destination at launch.
-fun CareSyncApp(
+fun CareSyncPatientAppScreens(
     onLogout: () -> Unit,
     startDestination: String = BottomNavItem.Medication.route,
     initialShowSettings: Boolean = false
@@ -157,5 +157,5 @@ fun TopBar(navController: NavHostController, onSettingsClick: () -> Unit) {
 @Preview
 @Composable
 fun CareSyncAppPreview() {
-    CareSyncApp({})
+    CareSyncPatientAppScreens({})
 }

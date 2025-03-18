@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.caresync.BottomNavItem
-import com.example.caresync.CareSyncApp
+import com.example.caresync.ui.screens.BottomNavItem
+import com.example.caresync.ui.screens.CareSyncPatientAppScreens
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -114,5 +114,5 @@ fun HealthCardScreen(
 @Preview(showBackground = true)
 @Composable
 fun HealthCardScreenPreview() {
-    CareSyncApp({}, BottomNavItem.HealthCard.route)
+    CareSyncPatientAppScreens({}, BottomNavItem.HealthCard.route)
 }
