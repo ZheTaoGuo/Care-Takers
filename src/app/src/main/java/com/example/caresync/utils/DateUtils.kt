@@ -36,3 +36,19 @@ fun getDayBounds(date: Date): Pair<Long, Long> {
 
     return startOfDay to endOfDay
 }
+
+fun getDateWithTime(today: Date, hour: Int, minute: Int): Date {
+    return Calendar.getInstance().apply {
+        time = today
+        set(Calendar.HOUR_OF_DAY, hour)
+        set(Calendar.MINUTE, minute)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.time
+}
+
+fun getTodayWithSpecifiedTime(hour: Int, minute: Int): Date {
+    val today = Calendar.getInstance().time
+    return getDateWithTime(today, hour, minute)
+}
+

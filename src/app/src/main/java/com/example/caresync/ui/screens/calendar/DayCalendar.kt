@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.caresync.datasource.MedicationDataSource
 import com.example.caresync.model.MedicationDosage
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import java.util.Calendar
 import java.util.Date
 
@@ -46,10 +47,12 @@ fun getCurrentTime(): Pair<Int, Int> {
 
 // NOTE(RAYNER): Need to assume that this calendar doesn't get anything beyond the date it has.
 @Composable
-fun DayCalendarView(viewModel: CalendarViewModel) {
-    val uiState by viewModel.uiState.collectAsState()
-    val dosagesForDay by viewModel.getDosagesForDate(Calendar.getInstance().time).collectAsState(initial = emptyList())
-
+fun DayCalendarView(
+    dosagesForDay: List<MedicationDosage>,
+    minuteHeight: Float,
+    startHour: Int,
+    endHour: Int
+) {
     var currentTime by remember { mutableStateOf(getCurrentTime()) }
     // Update time every minute
     LaunchedEffect(Unit) {
@@ -67,8 +70,8 @@ fun DayCalendarView(viewModel: CalendarViewModel) {
             .fillMaxSize()
             .background(color = Color.White)
             .drawBehind {
-                val hourHeight = (60 * uiState.minuteHeight).dp.toPx() // Height of each hour row
-                val yOffset = ((currentHour - uiState.startHour) * hourHeight) + ((currentMinute / 60f) * hourHeight)
+                val hourHeight = (60 * minuteHeight).dp.toPx() // Height of each hour row
+                val yOffset = ((currentHour - startHour) * hourHeight) + ((currentMinute / 60f) * hourHeight)
 
                 drawCircle(
                     color = Color.Red,
@@ -85,11 +88,11 @@ fun DayCalendarView(viewModel: CalendarViewModel) {
         contentPadding = PaddingValues(16.dp)
     ) {
         items(24) { hour ->
-            if (hour in uiState.startHour .. uiState.endHour) {
+            if (hour in startHour .. endHour) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height((60 * uiState.minuteHeight).dp) // Adjust height for different time resolutions
+                        .height((60 * minuteHeight).dp) // Adjust height for different time resolutions
                         .drawBehind {
                             drawLine(
                                 color = Color.Gray.copy(alpha = 0.5f),
@@ -112,7 +115,7 @@ fun DayCalendarView(viewModel: CalendarViewModel) {
                                 hour = dosage.hour,
                                 min = dosage.minute,
                                 isDone = dosage.isDosageTaken,
-                                minuteHeight = uiState.minuteHeight
+                                minuteHeight = minuteHeight
                             )
                         }
                     }
@@ -149,12 +152,16 @@ fun CalendarBlock(title: String, hour: Int, min: Int, isDone: Boolean, minuteHei
 @Preview(showBackground = true)
 @Composable
 fun DayCalendarViewPreview() {
-    val viewModel: CalendarViewModel = viewModel(factory = CalendarViewModel.factory)
-
-//    Box { // FOR DEBUGGING
-        DayCalendarView(viewModel)
+    DayCalendarView(
+        dosagesForDay = MedicationDataSource.sampleMedicationDosages,
+        minuteHeight = 1f,
+        startHour = 8,
+        endHour = 22
+    )
 
 // FOR DEBUGGING
+//    Box { // FOR DEBUGGING
+//        // Put the DayCalendarView here for debug.
 //        Column {
 //            Text(text = "CurDate: " + currentDate)
 //            Text(text = "Dosages: " + dosagesByDate)
