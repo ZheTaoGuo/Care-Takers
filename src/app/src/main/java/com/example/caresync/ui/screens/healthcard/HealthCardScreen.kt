@@ -50,9 +50,9 @@ fun HealthCardScreen(
             LazyColumn( Modifier.fillMaxSize().padding(16.dp)) {
                 item {
                     ProfileSection(
-                        title = "Photo and Information",
+                        title = "Personal Information",
                         content = null,
-                        onEdit = { editSection = "Photo and Information" }
+                        onEdit = { editSection = "Personal Information" }
                     )
                     ProfileContent(userProfile = userProfile)
                 }

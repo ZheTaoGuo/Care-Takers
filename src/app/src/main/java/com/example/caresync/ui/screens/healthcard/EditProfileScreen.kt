@@ -48,7 +48,7 @@ fun EditProfileScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         when (section) {
-            "Photo and Information" -> {
+            "Personal Information" -> {
                 var name by remember { mutableStateOf(userProfile.name) }
                 var dob by remember { mutableStateOf(userProfile.dateOfBirth) }
                 var language by remember { mutableStateOf(userProfile.primaryLanguage) }

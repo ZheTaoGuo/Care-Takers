@@ -26,7 +26,6 @@ abstract class UserProfileDatabase : RoomDatabase() {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, UserProfileDatabase::class.java, "user_profile_db")
                     .createFromAsset("database/user_profile.db")
-                    .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
             }
@@ -46,7 +45,6 @@ abstract class EmergencyContactDatabase : RoomDatabase() {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, EmergencyContactDatabase::class.java, "contact_db")
                     .createFromAsset("database/contact.db")
-                    .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
             }
