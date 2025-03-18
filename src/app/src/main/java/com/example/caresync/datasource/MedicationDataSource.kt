@@ -25,4 +25,9 @@ object MedicationDataSource {
         MedicationDosage( 2, medicationId = 1, isDosageTaken = false, scheduledDatetime = getTodayWithSpecifiedTime(13, 0), isRescheduled = false),
         MedicationDosage( 3, medicationId = 1, isDosageTaken = false, scheduledDatetime = getTodayWithSpecifiedTime(20, 45), isRescheduled = false),
     )
+
+    // Function to get medication name by ID
+    fun getMedicationNameById(medicationId: Long): String? {
+        return sampleMedications.find { it.id == medicationId }?.name
+    }
 }

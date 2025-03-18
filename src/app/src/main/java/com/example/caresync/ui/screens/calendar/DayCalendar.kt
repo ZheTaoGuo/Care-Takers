@@ -20,9 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +38,7 @@ import com.example.caresync.datasource.MedicationDataSource
 import com.example.caresync.model.MedicationDosage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 
@@ -52,8 +55,11 @@ fun DayCalendarView(
     minuteHeight: Float,
     startHour: Int,
     endHour: Int,
-    getMedicationName: suspend (Long)->String
+    getMedicationName: suspend (Long)->String,
+    updateIsDosageTaken: suspend (Long, Boolean) -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope() // Creates a coroutine scope for this composable
+
     var currentTime by remember { mutableStateOf(getCurrentTime()) }
     // Update time every minute
     LaunchedEffect(Unit) {
@@ -126,7 +132,12 @@ fun DayCalendarView(
                                     hour = dosage.hour,
                                     min = dosage.minute,
                                     isDone = dosage.isDosageTaken,
-                                    minuteHeight = minuteHeight
+                                    minuteHeight = minuteHeight,
+                                    onCheckedChange = { isChecked ->
+                                        coroutineScope.launch {
+                                            updateIsDosageTaken(dosage.id, isChecked)
+                                        }
+                                    }
                                 )
                             } ?: run {
                                 // You can show a loading spinner or something until the medication name is loaded
@@ -141,7 +152,14 @@ fun DayCalendarView(
 }
 
 @Composable
-fun CalendarBlock(title: String, hour: Int, min: Int, isDone: Boolean, minuteHeight: Float) {
+fun CalendarBlock(
+    title: String,
+    hour: Int,
+    min: Int,
+    isDone: Boolean,
+    minuteHeight: Float,
+    onCheckedChange: (Boolean) -> Unit
+) {
     Box(
         modifier = Modifier
             .offset(y = (min * minuteHeight).dp)
@@ -156,7 +174,7 @@ fun CalendarBlock(title: String, hour: Int, min: Int, isDone: Boolean, minuteHei
 
         Checkbox(
             isDone,
-            onCheckedChange = {},
+            onCheckedChange = onCheckedChange,
             modifier = Modifier.align(Alignment.CenterEnd)
         )
     }
@@ -167,12 +185,29 @@ fun CalendarBlock(title: String, hour: Int, min: Int, isDone: Boolean, minuteHei
 @Preview(showBackground = true)
 @Composable
 fun DayCalendarViewPreview() {
+    // Use a SnapshotStateList so that updates to items trigger recomposition.
+    val mockDosages = remember {
+        mutableStateListOf<MedicationDosage>().apply {
+            // Assuming sampleMedicationDosages is a List<MedicationDosage>
+            addAll(MedicationDataSource.sampleMedicationDosages)
+        }
+    }
+
     DayCalendarView(
-        dosagesForDay = MedicationDataSource.sampleMedicationDosages,
+        dosagesForDay = mockDosages,
         minuteHeight = 1f,
         startHour = 8,
         endHour = 22,
-        getMedicationName = { id: Long -> "TEST_MED_NAME_${id}" }
+        getMedicationName = { id: Long ->
+            MedicationDataSource.getMedicationNameById(id) ?: "UNKNOWN"
+        },
+        updateIsDosageTaken = { dosageId, isChecked ->
+            // Find the index and update using copy()
+            val index = mockDosages.indexOfFirst { it.id == dosageId }
+            if (index != -1) {
+                mockDosages[index] = mockDosages[index].copy(isDosageTaken = isChecked)
+            }
+        }
     )
 
 // FOR DEBUGGING

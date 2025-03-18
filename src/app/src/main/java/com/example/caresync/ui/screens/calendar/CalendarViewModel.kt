@@ -59,6 +59,10 @@ class CalendarViewModel(private val medicationDao: MedicationDao) : ViewModel() 
         return medication?.name ?: "NULL"
     }
 
+    suspend fun updateDosageTaken(dosageId: Long, isDosageTaken: Boolean) {
+        medicationDao.updateDosageStatus(dosageId, isDosageTaken)
+    }
+
     companion object {
         val factory : ViewModelProvider.Factory = viewModelFactory {
             initializer {

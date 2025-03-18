@@ -22,6 +22,9 @@ fun CalendarScreen(
         endHour = uiState.endHour,
         getMedicationName = { medicationId ->
             viewModel.getMedicationName(medicationId) // Call your ViewModel's function to get the name
+        },
+        updateIsDosageTaken = { dosageId, isChecked ->
+            viewModel.updateDosageTaken(dosageId, isChecked)
         }
     )
 }
