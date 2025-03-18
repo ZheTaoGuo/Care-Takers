@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import com.example.caresync.model.UserProfile
 import com.example.caresync.ui.theme.*
 
 @Composable
@@ -23,7 +24,20 @@ fun HealthCardScreen(
     viewModel: HealthCardViewModel = viewModel(factory = HealthCardViewModel.factory)
 ) {
     var editSection by remember { mutableStateOf<String?>(null) }
-    val userProfile by viewModel.userProfile.collectAsState()
+    val userProfile by viewModel.getUserProfile().collectAsState(initial = UserProfile(
+        id = 0,
+        name = "",
+        dateOfBirth = "",
+        primaryLanguage = "",
+        organDonation = false,
+        pregnancy = false,
+        allergies = "",
+        conditions = "",
+        height = 0.0,
+        weight = 0.0,
+        bloodType = "",
+    ))
+    val emergencyContacts by viewModel.getEmergencyContacts().collectAsState(initial = emptyList())
 
     if (editSection != null) {
         EditProfileScreen(
@@ -71,8 +85,8 @@ fun HealthCardScreen(
                 item {
                     ProfileSection(
                         title = "Emergency Contacts",
-                        content = if (userProfile.emergencyContacts.isEmpty()) "No contacts added"
-                        else userProfile.emergencyContacts.joinToString("\n") { "${it.relationship}: ${it.name} (${it.phoneNumber})" },
+                        content = if (emergencyContacts.isEmpty()) "No contacts added"
+                        else emergencyContacts.joinToString("\n") { "${it.relationship}: ${it.name} (${it.phoneNumber})" },
                         onEdit = { editSection = "Emergency Contacts" }
                     )
                 }

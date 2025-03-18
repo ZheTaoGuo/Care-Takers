@@ -18,12 +18,10 @@ fun MedicationContent(viewModel: HealthCardViewModel) {
     val medications by viewModel.getAllMedications().collectAsState(initial = emptyList())
 
     if (medications.isEmpty()) {
-        println("Medications empty: $medications")
         Box(modifier = Modifier.fillMaxSize().padding(8.dp), contentAlignment = Alignment.Center) {
             Text("No medications added yet.", style = MaterialTheme.typography.bodyLarge)
         }
     } else {
-        println("Medications got something: $medications")
 
         Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
             for (i in medications.indices step 2) {

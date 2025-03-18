@@ -12,72 +12,89 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.example.caresync.model.Medication
-import com.example.caresync.datasource.MedicationDataSource
 import com.example.caresync.model.EmergencyContact
+import com.example.caresync.model.EmergencyContactDao
 import com.example.caresync.model.UserProfile
-import com.example.caresync.datasource.UserDataSource
 import com.example.caresync.model.MedicationDao
-import com.example.caresync.model.MedicationDosage
-import com.example.caresync.utils.getDayBounds
+import com.example.caresync.model.UserProfileDao
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
 
-class HealthCardViewModel(private val medicationDao: MedicationDao) : ViewModel() {
-    private val _userProfile = MutableStateFlow(UserDataSource.sampleUserProfile)
-    val userProfile: StateFlow<UserProfile> = _userProfile
+class HealthCardViewModel(
+    private val userProfileDao: UserProfileDao,
+    private val emergencyContactDao: EmergencyContactDao,
+    private val medicationDao: MedicationDao)
+    : ViewModel() {
 
-    fun updateUserProfileInfo(name: String, dob: String, language: String, photoUri: Uri?, organDonation: Boolean) {
+//    val userProfile: Flow<UserProfile> = userProfileDao.getUserProfile()
+//    val emergencyContacts: Flow<List<EmergencyContact>> = emergencyContactDao.getEmergencyContacts()
+
+    fun getUserProfile(): Flow<UserProfile> {
+        return userProfileDao.getUserProfile()
+    }
+
+    fun updateUserProfileInfo(name: String, dob: String, language: String, organDonation: Boolean) {
         viewModelScope.launch {
-            _userProfile.value = _userProfile.value.copy(
-                name = name,
-                dateOfBirth = dob,
-                primaryLanguage = language,
-                photoUri = photoUri,
-                organDonation = organDonation
+            val profile = userProfileDao.getUserProfileNow()
+            userProfileDao.updateUserProfile(
+                profile.copy(
+                    name = name,
+                    dateOfBirth = dob,
+                    primaryLanguage = language,
+//                    photoUri = photoUri?.toString(),
+                    organDonation = organDonation
+                )
             )
         }
     }
 
     fun updatePregnancyStatus(isPregnant: Boolean) {
         viewModelScope.launch {
-            _userProfile.value = _userProfile.value.copy(pregnancy = isPregnant)
+            val profile = userProfileDao.getUserProfileNow()
+            userProfileDao.updateUserProfile(profile.copy(pregnancy = isPregnant))
         }
     }
 
     fun updateAllergies(allergies: String) {
         viewModelScope.launch {
-            _userProfile.value = _userProfile.value.copy(allergies = allergies)
+            val profile = userProfileDao.getUserProfileNow()
+            userProfileDao.updateUserProfile(profile.copy(allergies = allergies))
         }
     }
 
     fun updateMedicalConditions(conditions: String) {
         viewModelScope.launch {
-            _userProfile.value = _userProfile.value.copy(conditions = conditions)
+            val profile = userProfileDao.getUserProfileNow()
+            userProfileDao.updateUserProfile(profile.copy(conditions = conditions))
         }
     }
 
     fun updateAdditionalInfo(height: Double, weight: Double, bloodType: String) {
         viewModelScope.launch {
-            _userProfile.value = _userProfile.value.copy(
-                height = height,
-                weight = weight,
-                bloodType = bloodType
+            val profile = userProfileDao.getUserProfileNow()
+            userProfileDao.updateUserProfile(
+                profile.copy(
+                    height = height,
+                    weight = weight,
+                    bloodType = bloodType
+                )
             )
         }
     }
 
+    fun getEmergencyContacts(): Flow<List<EmergencyContact>> {
+        return emergencyContactDao.getEmergencyContacts()
+    }
+
     fun addEmergencyContact(relationship: String, name: String, phoneNumber: String) {
         viewModelScope.launch {
-            val updatedContacts = _userProfile.value.emergencyContacts + EmergencyContact(relationship, name, phoneNumber)
-            _userProfile.value = _userProfile.value.copy(emergencyContacts = updatedContacts)
+            val contact = EmergencyContact(relationship = relationship, name = name, phoneNumber = phoneNumber)
+            emergencyContactDao.insertEmergencyContact(contact)
         }
     }
 
-    fun removeEmergencyContact(index: Int) {
+    fun removeEmergencyContact(contact: EmergencyContact) {
         viewModelScope.launch {
-            val updatedContacts = _userProfile.value.emergencyContacts.toMutableList()
-            updatedContacts.removeAt(index)
-            _userProfile.value = _userProfile.value.copy(emergencyContacts = updatedContacts)
+            emergencyContactDao.deleteEmergencyContact(contact)
         }
     }
 
@@ -86,11 +103,16 @@ class HealthCardViewModel(private val medicationDao: MedicationDao) : ViewModel(
     }
 
     companion object {
-        val factory : ViewModelProvider.Factory = viewModelFactory {
+        val factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as CareSyncApplication)
-                HealthCardViewModel(application.medicationDatabase.medicationDao())
+                HealthCardViewModel(
+                    application.userProfileDatabase.userProfileDao(),
+                    application.emergencyContactDatabase.emergencyContactDao(),
+                    application.medicationDatabase.medicationDao()
+                )
             }
         }
     }
+
 }

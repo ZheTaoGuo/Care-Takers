@@ -1,9 +1,12 @@
 package com.example.caresync.model
 
-import android.net.Uri
+import androidx.room.PrimaryKey
+import androidx.room.Entity
 
+@Entity(tableName = "user_profile")
 data class UserProfile(
-    val photoUri: Uri?,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+//    val photoUri: String?,
     val name: String,
     val dateOfBirth: String,
     val primaryLanguage: String ,
@@ -14,10 +17,13 @@ data class UserProfile(
     val height: Double ,
     val weight: Double ,
     val bloodType: String,
-    val emergencyContacts: List<EmergencyContact> = emptyList()
 )
 
+@Entity(
+    tableName = "emergency_contacts"
+)
 data class EmergencyContact(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val relationship: String,
     val name: String,
     val phoneNumber: String

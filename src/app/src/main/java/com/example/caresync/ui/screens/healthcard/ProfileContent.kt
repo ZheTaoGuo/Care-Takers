@@ -19,10 +19,10 @@ import com.example.caresync.model.UserProfile
 fun ProfileContent(userProfile: UserProfile) {
     Column(modifier = Modifier.fillMaxWidth().padding(0.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
-            val imagePainter = userProfile.photoUri?.let {
-                rememberAsyncImagePainter(it)
-            } ?: painterResource(id = R.drawable.default_profile)
-
+//            val imagePainter = userProfile.photoUri?.let {
+//                rememberAsyncImagePainter(it)
+//            } ?: painterResource(id = R.drawable.default_profile)
+            val imagePainter =  painterResource(id = R.drawable.default_profile)
             Image(
                 painter = imagePainter,
                 contentDescription = "Profile Photo",

@@ -14,14 +14,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.caresync.model.UserProfile
+import com.example.caresync.model.UserProfileDao
 
 @Composable
 fun EditProfileScreen(
     section: String,
-    viewModel: HealthCardViewModel,
+    viewModel: HealthCardViewModel = viewModel(factory = HealthCardViewModel.factory),
     onBack: () -> Unit
 ) {
-    val userProfile by viewModel.userProfile.collectAsState()
+
+    val userProfileState by viewModel.getUserProfile().collectAsState(initial = null)
+    if (userProfileState == null) {
+        Text("Loading...", modifier = Modifier.fillMaxSize())
+        return
+    }
+
+    val userProfile = userProfileState!!
+
+    val emergencyContacts by viewModel.getEmergencyContacts().collectAsState(initial = emptyList())
+
+
+    LaunchedEffect(userProfile) {
+        println("DEBUG: Received UserProfile: $userProfile")
+    }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp)
@@ -35,12 +52,12 @@ fun EditProfileScreen(
                 var name by remember { mutableStateOf(userProfile.name) }
                 var dob by remember { mutableStateOf(userProfile.dateOfBirth) }
                 var language by remember { mutableStateOf(userProfile.primaryLanguage) }
-                var photoUri by remember { mutableStateOf(userProfile.photoUri) }
+//                var photoUri by remember { mutableStateOf(userProfile.photoUri) }
                 var organDonation by remember { mutableStateOf(userProfile.organDonation) }
 
-                val imagePickerLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.GetContent()
-                ) { uri: Uri? -> photoUri = uri }
+//                val imagePickerLauncher = rememberLauncherForActivityResult(
+//                    contract = ActivityResultContracts.GetContent()
+//                ) { uri: Uri? -> photoUri = uri }
 
                 OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = dob, onValueChange = { dob = it }, label = { Text("DOB") }, modifier = Modifier.fillMaxWidth())
@@ -51,9 +68,9 @@ fun EditProfileScreen(
                     Text("Organ Donor")
                 }
 
-                Button(onClick = { imagePickerLauncher.launch("image/*") }, modifier = Modifier.fillMaxWidth()) {
-                    Text("Change Profile Photo")
-                }
+//                Button(onClick = { imagePickerLauncher.launch("image/*") }, modifier = Modifier.fillMaxWidth()) {
+//                    Text("Change Profile Photo")
+//                }
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Button(onClick = onBack, modifier = Modifier.weight(1f).padding(end = 8.dp)) {
@@ -61,7 +78,7 @@ fun EditProfileScreen(
                     }
                     Button(
                         onClick = {
-                            viewModel.updateUserProfileInfo(name, dob, language, photoUri, organDonation)
+                            viewModel.updateUserProfileInfo(name, dob, language, organDonation)
                             onBack()
                         },
                         modifier = Modifier.weight(1f)
@@ -173,7 +190,7 @@ fun EditProfileScreen(
             }
 
             "Emergency Contacts" -> {
-                if (userProfile.emergencyContacts.isEmpty()) {
+                if (emergencyContacts.isEmpty()) {
                     Text(
                         text = "No contacts added",
                         style = MaterialTheme.typography.bodyMedium,
@@ -186,7 +203,7 @@ fun EditProfileScreen(
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
                     ) {
-                        itemsIndexed(userProfile.emergencyContacts) { index, contact ->
+                        itemsIndexed(emergencyContacts) { index, contact ->
                             Card(
                                 colors = CardDefaults.cardColors(containerColor = Color.LightGray),
                                 modifier = Modifier
@@ -205,7 +222,7 @@ fun EditProfileScreen(
                                         modifier = Modifier.weight(1f),
                                         style = MaterialTheme.typography.bodyMedium
                                     )
-                                    IconButton(onClick = { viewModel.removeEmergencyContact(index) }) {
+                                    IconButton(onClick = { viewModel.removeEmergencyContact(contact) }) {
                                         Icon(
                                             Icons.Default.Delete,
                                             contentDescription = "Remove Contact",
