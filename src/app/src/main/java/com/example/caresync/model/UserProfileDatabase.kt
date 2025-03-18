@@ -5,13 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.caresync.datasource.EmergencyContactDataSource
-import com.example.caresync.datasource.MedicationDataSource
-import com.example.caresync.datasource.UserProfileDataSource
-import com.example.caresync.model.UserProfileDatabase.Companion
 import com.example.caresync.utils.Converters
-import java.util.concurrent.Executors
 
 @Database(entities = [UserProfile::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)

@@ -1,6 +1,5 @@
 package com.example.caresync.ui.screens.healthcard
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -8,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.caresync.CareSyncApplication
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.example.caresync.model.Medication
 import com.example.caresync.model.EmergencyContact
@@ -24,9 +21,6 @@ class HealthCardViewModel(
     private val emergencyContactDao: EmergencyContactDao,
     private val medicationDao: MedicationDao)
     : ViewModel() {
-
-//    val userProfile: Flow<UserProfile> = userProfileDao.getUserProfile()
-//    val emergencyContacts: Flow<List<EmergencyContact>> = emergencyContactDao.getEmergencyContacts()
 
     fun getUserProfile(): Flow<UserProfile> {
         return userProfileDao.getUserProfile()
