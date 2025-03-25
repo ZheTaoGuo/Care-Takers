@@ -33,14 +33,14 @@ import java.util.Date
 @Composable
 fun MedicationCard(
     medication: Medication,
-    navigateToMedicationDetail: (Medication) -> Unit
+    modifier: Modifier
 ) {
     val (cardColor, boxColor, textColor) = medication.type.getCardColor()
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        onClick = { navigateToMedicationDetail(medication) },
+//        onClick = { navigateToMedicationDetail(medication) },
         shape = RoundedCornerShape(30.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(cardColor),
@@ -127,6 +127,7 @@ private fun MedicationCardTakenPreview() {
             totalDosage = 10,
             startDate = Date(),
             type = MedicationType.TABLET
-        )
-    ) { }
+        ),
+        modifier = TODO()
+    )
 }
