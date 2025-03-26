@@ -31,12 +31,13 @@ import kotlinx.coroutines.launch
 class MedicationViewModel(private val medicationDao: MedicationDao): ViewModel() {
     private val _MedicationUIState = MutableStateFlow(MedicationUIState())
     val MedicationUIState: StateFlow<MedicationUIState> = _MedicationUIState.asStateFlow()
+    val medicationRepository = MedicationRepository(medicationDao)
 
     fun addMedication(medication: Medication) {
         viewModelScope.launch {
             try {
-                val medicationRepository = MedicationRepository(medicationDao)
-                medicationRepository.insertMedicationWithDosages(medication)
+//                medicationRepository.insertMedicationWithDosages(medication)
+                medicationDao.insertMedication(medication)
                 _MedicationUIState.update { currentState ->
                     currentState.copy(medications = currentState.medications + medication)
                 }
