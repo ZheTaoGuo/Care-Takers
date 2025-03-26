@@ -1,11 +1,13 @@
 package com.example.caresync.model
 
 import android.icu.util.Calendar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.Date
 
 class MedicationRepository(private val medicationDao: MedicationDao) {
     // TODO(RAYNER): @ZheTao you need to be calling this when we add in new medications.
-    fun insertMedicationWithDosages(medication: Medication) {
+    suspend fun insertMedicationWithDosages(medication: Medication) = withContext(Dispatchers.IO) {
         val medicationId = medicationDao.insertMedication(medication)
         val dosages = generateDosages(medication, medicationId)
         medicationDao.insertAllDosages(dosages)

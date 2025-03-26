@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
-// TODO(RAYNER): This should all be converted to Flow<>
+// TODO(RAYNER): This should all be converted to Flow<> and suspend.
 @Dao
 interface MedicationDao {
     @Query("SELECT * FROM medications")
@@ -16,7 +16,7 @@ interface MedicationDao {
     fun insertAll(medications: List<Medication>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMedication(medication: Medication): Long
+    suspend fun insertMedication(medication: Medication): Long
 
     @Query("SELECT * FROM medications WHERE id = :medicationId LIMIT 1")
     suspend fun getMedicationById(medicationId: Long): Medication?
@@ -26,10 +26,10 @@ interface MedicationDao {
 
     // MedicationDosage-related functions
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertDosage(medicationDosage: MedicationDosage)
+    suspend fun insertDosage(medicationDosage: MedicationDosage)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllDosages(dosages: List<MedicationDosage>)
+    suspend fun insertAllDosages(dosages: List<MedicationDosage>)
 
     @Query("SELECT * FROM medicationDosages WHERE medicationId = :medicationId")
     fun getDosagesForMedication(medicationId: Long): List<MedicationDosage>

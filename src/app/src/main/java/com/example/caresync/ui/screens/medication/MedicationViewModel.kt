@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.update
 import java.util.Date
 import com.example.caresync.model.MedicationDao
 import com.example.caresync.model.MedicationRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -34,10 +35,9 @@ class MedicationViewModel(private val medicationDao: MedicationDao): ViewModel()
     val medicationRepository = MedicationRepository(medicationDao)
 
     fun addMedication(medication: Medication) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) { // Run in IO thread
             try {
-//                medicationRepository.insertMedicationWithDosages(medication)
-                medicationDao.insertMedication(medication)
+                medicationRepository.insertMedicationWithDosages(medication)
                 _MedicationUIState.update { currentState ->
                     currentState.copy(medications = currentState.medications + medication)
                 }
