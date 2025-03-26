@@ -5,12 +5,13 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.caresync.R
 import java.util.Date
 
-enum class Frequency{
-    ONCE,
-    TWICE,
-    THRICE
+enum class Frequency(val stringResId: Int, val frequency: Int){
+    ONCE(R.string.once, 1),
+    TWICE(R.string.twice, 2),
+    THRICE(R.string.thrice, 3)
 };
 
 // NOTE(RAYNER): Hey this should be maybe in the UI class instead? So don't confuse with models.

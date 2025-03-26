@@ -1,5 +1,6 @@
 package com.example.caresync.ui.screens
 
+import android.util.Log
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.padding
@@ -31,6 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.caresync.ui.screens.calendar.CalendarScreen
 import com.example.caresync.ui.screens.healthcard.HealthCardScreen
 import com.example.caresync.ui.screens.map.MapScreen
+import com.example.caresync.ui.screens.medication.AddMedicationScreen
 import com.example.caresync.ui.screens.medication.MedicationScreen
 import com.example.caresync.ui.screens.mood.MoodScreen
 import com.example.caresync.ui.screens.settings.SettingsScreen
@@ -66,7 +68,14 @@ fun CareSyncPatientAppScreens(
                 enterTransition = { EnterTransition.None },
                 exitTransition = { ExitTransition.None }
             ) {
-                composable(BottomNavItem.Medication.route) { MedicationScreen() }
+                composable(BottomNavItem.Medication.route) { MedicationScreen(
+                    navController = navController
+                ) }
+                composable(route = "addMedication") {
+                    AddMedicationScreen(
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
                 composable(BottomNavItem.Calendar.route) { CalendarScreen() }
                 composable(BottomNavItem.HealthCard.route) { HealthCardScreen() }
                 composable(BottomNavItem.Mood.route) { MoodScreen() }
