@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -32,6 +33,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -40,6 +42,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -55,14 +58,19 @@ import com.example.caresync.ui.screens.healthcard.MedicationItem
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.foundation.lazy.items
+import androidx.navigation.NavController
 
 @Composable
-fun MedicationScreen(viewModel: MedicationViewModel = viewModel()) {
-//    val uiState by viewModel.MedicationUIState.collectAsState()
+fun MedicationScreen(viewModel: MedicationViewModel = viewModel(factory = MedicationViewModel.factory),
+                     navController: NavController
+) {
     val medications by viewModel.getAllMedications().collectAsState(initial = emptyList())
     MedicationScreenContent(
         medications = medications,
-        onAddMedicationClick = {},
+        onAddMedicationClick = {
+            navController.navigate("addMedication")
+        },
     )
 }
 
@@ -71,27 +79,37 @@ fun MedicationScreenContent(
     medications: List<Medication>,
     onAddMedicationClick: () -> Unit
 ) {
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = onAddMedicationClick) {
-                Icon(Icons.Default.Add, contentDescription = "Add Medication")
+    Scaffold { innerPadding -> Column(
+        modifier = Modifier.fillMaxSize().padding(innerPadding).padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(2.dp)
+        ) {
+            Button(
+                onClick = onAddMedicationClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text("Add Medication")
             }
         }
-    ) {
-            innerPadding -> Column(modifier = Modifier.fillMaxSize().padding(innerPadding)
-    ) {
-        Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-            for(i in medications.indices) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(medications) { medication ->
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    MedicationCard(medications[i], modifier = Modifier.weight(1f))
-                    if (i + 1 < medications.size) {
-                        MedicationItem(medications[i + 1], modifier = Modifier.weight(1f))
-                    } else {
-                        Spacer(modifier = Modifier.weight(1f))
-                    }
+                    MedicationCard(
+                        medication = medication,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         }
@@ -114,4 +132,3 @@ fun MedicationScreenPreview() {
     )
 }
 
-//    CareSyncPatientAppScreens({}, BottomNavItem.Medication.route)
