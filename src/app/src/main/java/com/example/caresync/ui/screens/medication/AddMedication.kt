@@ -85,7 +85,7 @@ fun AddMedicationScreen(
     var selectedFrequency by remember { mutableStateOf(Frequency.ONCE) }
     System.out.println(selectedFrequency.javaClass.kotlin)
     var amtPerDosage by remember { mutableStateOf("") }
-    val totalDosage = amtPerDosage.toInt() * selectedFrequency.getCount()
+    val totalDosage = (amtPerDosage.toIntOrNull() ?: 0) * selectedFrequency.getCount()
     System.out.println(totalDosage.javaClass.kotlin)
     var medicationType by remember { mutableStateOf(MedicationType.TABLET) }
     var showDatePicker by remember { mutableStateOf(false) }
