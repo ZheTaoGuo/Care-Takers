@@ -14,6 +14,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.example.caresync.MainActivity
 import com.example.caresync.R
+import java.util.Date
 import kotlin.random.Random
 
 class NotificationHandler(private val context: Context) {
@@ -39,7 +40,7 @@ class NotificationHandler(private val context: Context) {
         }
     }
 
-    fun scheduleNotification(timeInMillis: Long, title: String, message: String) {
+    fun scheduleNotification(scheduledDate: Date, title: String, message: String) {
         val alarmManager = context.getSystemService(AlarmManager::class.java)
         val intent = Intent(context, NotificationReceiver::class.java).apply {
             putExtra("NOTIFICATION_TITLE", title)
@@ -62,6 +63,7 @@ class NotificationHandler(private val context: Context) {
             }
         }
 
+        val timeInMillis = scheduledDate.time
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             timeInMillis,

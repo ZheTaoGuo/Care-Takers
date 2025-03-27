@@ -78,11 +78,11 @@ class MainActivity : ComponentActivity() {
                                     Text("Show Notification")
                                 }
                                 Button(onClick = {
-                                    val calendar = Calendar.getInstance().apply {
+                                    val tenSecondsInFuture = Calendar.getInstance().apply {
                                         add(Calendar.SECOND, 10) // Schedule for 10 seconds later
                                     }
                                     notificationHandler.scheduleNotification(
-                                        calendar.timeInMillis,
+                                        tenSecondsInFuture.time,
                                         "Custom Title",
                                         "Custom Message!!!"
                                     )
