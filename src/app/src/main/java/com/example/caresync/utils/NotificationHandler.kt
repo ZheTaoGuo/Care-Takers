@@ -20,8 +20,6 @@ import kotlin.random.Random
 class NotificationHandler(private val context: Context) {
     object Constants {
         const val dosageReminderChannelID = "dosage_reminder_id"
-        const val NOTIFICATION_REQUEST_CODE = 1001
-        const val EXTRA_NOTIFICATION_ID = "EXTRA_NOTIFICATION_ID"
     }
 
     private val notificationManager = context.getSystemService(NotificationManager::class.java)
@@ -47,9 +45,10 @@ class NotificationHandler(private val context: Context) {
             putExtra("NOTIFICATION_MESSAGE", message)
         }
 
+        val requestCode = Random.nextInt()
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            Constants.NOTIFICATION_REQUEST_CODE,
+            requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
