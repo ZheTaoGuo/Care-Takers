@@ -1,7 +1,9 @@
 package com.example.caresync.utils
 
 import android.icu.util.Calendar
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 fun areSameDate(date1: Date, date2: Date): Boolean {
     val cal1 = Calendar.getInstance().apply {
@@ -50,5 +52,24 @@ fun getDateWithTime(today: Date, hour: Int, minute: Int): Date {
 fun getTodayWithSpecifiedTime(hour: Int, minute: Int): Date {
     val today = Calendar.getInstance().time
     return getDateWithTime(today, hour, minute)
+}
+
+fun addOneDay(date: Date): Date {
+    return java.util.Calendar.getInstance().apply {
+        time = date
+        add(Calendar.DAY_OF_YEAR, 1)
+    }.time
+}
+
+fun minusOneDay(date: Date): Date {
+    return java.util.Calendar.getInstance().apply {
+        time = date
+        add(Calendar.DAY_OF_YEAR, -1)
+    }.time
+}
+
+fun formatDateWithDayOfWeek(date: Date): String {
+    val formatter = SimpleDateFormat("(E) dd-MM-yyyy", Locale.getDefault())
+    return formatter.format(date)
 }
 

@@ -14,9 +14,10 @@ fun CalendarScreen(
     viewModel: CalendarViewModel = viewModel(factory = CalendarViewModel.factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val dosagesForDay by viewModel.getDosagesForDate(Calendar.getInstance().time).collectAsState(initial = emptyList())
+    val dosagesForDay by viewModel.getDosagesForDate(uiState.currentDate).collectAsState(initial = emptyList())
     DayCalendarView(
         dosagesForDay = dosagesForDay,
+        curDate = uiState.currentDate,
         minuteHeight = uiState.minuteHeight,
         startHour = uiState.startHour,
         endHour = uiState.endHour,
@@ -25,7 +26,9 @@ fun CalendarScreen(
         },
         updateIsDosageTaken = { dosageId, isChecked ->
             viewModel.updateDosageTaken(dosageId, isChecked)
-        }
+        },
+        navNextDay = { viewModel.navigateToNextDay() },
+        navPrevDay = { viewModel.navigateToPrevDay() }
     )
 }
 

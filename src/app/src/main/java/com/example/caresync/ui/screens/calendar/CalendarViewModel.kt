@@ -12,16 +12,20 @@ import com.example.caresync.model.Medication
 import com.example.caresync.model.MedicationDao
 import com.example.caresync.model.MedicationDosage
 import com.example.caresync.utils.Clamp
+import com.example.caresync.utils.addOneDay
 import com.example.caresync.utils.getDayBounds
+import com.example.caresync.utils.minusOneDay
+import com.google.maps.android.compose.currentCameraPositionState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.util.Calendar
 import java.util.Date
 
 class CalendarViewModel(private val medicationDao: MedicationDao) : ViewModel() {
-    private val _uiState = MutableStateFlow(CalendarUiState())
+    private val _uiState = MutableStateFlow(CalendarUiState(currentDate = Calendar.getInstance().time))
     val uiState: StateFlow<CalendarUiState> = _uiState.asStateFlow()
 
     fun updateStartHour(startHour: Int) {
@@ -49,8 +53,8 @@ class CalendarViewModel(private val medicationDao: MedicationDao) : ViewModel() 
         }
     }
 
-    fun getDosagesForDate(curDate: Date): Flow<List<MedicationDosage>> {
-        val (start, end) = getDayBounds(Date())
+    fun getDosagesForDate(date: Date): Flow<List<MedicationDosage>> {
+        val (start, end) = getDayBounds(date)
         return medicationDao.getDosagesForDate(start, end)
     }
 
@@ -61,6 +65,24 @@ class CalendarViewModel(private val medicationDao: MedicationDao) : ViewModel() 
 
     suspend fun updateDosageTaken(dosageId: Long, isDosageTaken: Boolean) {
         medicationDao.updateDosageStatus(dosageId, isDosageTaken)
+    }
+
+    fun navigateToNextDay() {
+        _uiState.update { currentState ->
+            val nextDayDate = addOneDay(currentState.currentDate)
+            currentState.copy(
+                currentDate = nextDayDate
+            )
+        }
+    }
+
+    fun navigateToPrevDay() {
+        _uiState.update { currentState ->
+            val nextDayDate = minusOneDay(currentState.currentDate)
+            currentState.copy(
+                currentDate = nextDayDate
+            )
+        }
     }
 
     companion object {
