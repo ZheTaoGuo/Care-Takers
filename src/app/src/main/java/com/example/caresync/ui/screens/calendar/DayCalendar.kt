@@ -3,6 +3,7 @@ package com.example.caresync.ui.screens.calendar
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -165,10 +167,6 @@ fun DayCalendarView(
 
                             val dosagesForThisHour = dosagesForDay.filter { it.hour == hour }
                             if (dosagesForThisHour.isNotEmpty()) {
-                                Log.i(
-                                    "DEBUG",
-                                    "Num dosages in this hour: ${dosagesForThisHour.count()}"
-                                )
                                 dosagesForThisHour.forEach { dosage ->
                                     // Fetch the medication name asynchronously
                                     var medicationName by remember { mutableStateOf<String?>(null) }
@@ -190,6 +188,9 @@ fun DayCalendarView(
                                                 coroutineScope.launch {
                                                     updateIsDosageTaken(dosage.id, isChecked)
                                                 }
+                                            },
+                                            onLongPress = {
+                                                Log.i("DEBUG", "Detected long press on ${dosage.id}-$name")
                                             },
                                             modifier = Modifier.weight(1f)
                                         )
@@ -216,6 +217,7 @@ fun CalendarBlock(
     isDone: Boolean,
     minuteHeight: Float,
     onCheckedChange: (Boolean) -> Unit,
+    onLongPress: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -235,7 +237,18 @@ fun CalendarBlock(
                     modifier = Modifier.padding(end = 4.dp)
                 )
             }
-            Text(text = "${title} [${hour}:${min}]", color = Color.Black)
+            Text(
+                text = "${title} [${hour}:${min}]",
+                color = Color.Black,
+                modifier = Modifier
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onLongPress = {
+                                onLongPress()
+                            }
+                        )
+                    }
+            )
         }
     }
 }
