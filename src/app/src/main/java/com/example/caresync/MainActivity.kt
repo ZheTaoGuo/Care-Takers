@@ -1,13 +1,17 @@
 package com.example.caresync
 
+import RequestExactAlarmPermission
 import RequestNotificationPermission
+import android.icu.util.Calendar
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -56,15 +60,31 @@ class MainActivity : ComponentActivity() {
                 }
             }
             CareSyncTheme {
-                RequestNotificationPermission()
+                RequestNotificationPermission() // API 33+ Notifications
+                RequestExactAlarmPermission() // API 31+ AlarmManager
 
                 Crossfade(targetState = showSplash, label = "Screen Transition") { isSplash ->
                     if (isSplash) {
                         SplashScreen()
                     } else {
                         if (true) {
-                            Button(onClick = { notificationHandler.showSimpleNotification() }) {
-                                Text("Show Notification")
+                            Column {
+                                Button(onClick = { notificationHandler.showSimpleNotification() }) {
+                                    Text("Show Notification")
+                                }
+                                Button(onClick = {
+                                    val calendar = Calendar.getInstance().apply {
+                                        add(Calendar.SECOND, 10) // Schedule for 10 seconds later
+                                    }
+                                    notificationHandler.scheduleNotification(calendar.timeInMillis)
+                                    Toast.makeText(
+                                        context,
+                                        "Notification Scheduled!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }) {
+                                    Text("Schedule Notification (10s)")
+                                }
                             }
                         } else {
                             when (loginState) {

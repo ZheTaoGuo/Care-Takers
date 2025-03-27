@@ -1,6 +1,7 @@
 package com.example.caresync.utils
 
 import android.Manifest
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -18,6 +19,8 @@ import kotlin.random.Random
 class NotificationHandler(private val context: Context) {
     object Constants {
         const val dosageReminderChannelID = "dosage_reminder_id"
+        const val NOTIFICATION_REQUEST_CODE = 1001
+        const val EXTRA_NOTIFICATION_ID = "EXTRA_NOTIFICATION_ID"
     }
 
     private val notificationManager = context.getSystemService(NotificationManager::class.java)
@@ -34,6 +37,33 @@ class NotificationHandler(private val context: Context) {
             }
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    fun scheduleNotification(timeInMillis: Long) {
+        val alarmManager = context.getSystemService(AlarmManager::class.java)
+        val intent = Intent(context, NotificationReceiver::class.java)
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            Constants.NOTIFICATION_REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Check if we have permission to schedule an exact alarm
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = context.getSystemService(AlarmManager::class.java)
+            if (!alarmManager.canScheduleExactAlarms()) {
+                // Handle this by requesting permission (step 3)
+                return
+            }
+        }
+
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            timeInMillis,
+            pendingIntent
+        )
     }
 
     fun showSimpleNotification() {
