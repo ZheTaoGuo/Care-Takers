@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -39,13 +40,22 @@ class NotificationHandler(private val context: Context) {
     }
 
     fun scheduleNotification(scheduledDate: Date, title: String, message: String) {
+        val currentTime = System.currentTimeMillis()
+        val scheduledTime = scheduledDate.time
+
+        // Check if the scheduled time is in the past
+        if (scheduledTime <= currentTime) {
+            Log.e("Alarm", "Cannot schedule notifications in the past!")
+            return // Exit early
+        }
+
         val alarmManager = context.getSystemService(AlarmManager::class.java)
         val intent = Intent(context, NotificationReceiver::class.java).apply {
             putExtra("NOTIFICATION_TITLE", title)
             putExtra("NOTIFICATION_MESSAGE", message)
         }
 
-        val requestCode = Random.nextInt()
+        val requestCode = Random.nextInt() // TODO(RAYNER): Replace with passed in medicationDosageID?
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             requestCode,
