@@ -67,81 +67,51 @@ class MainActivity : ComponentActivity() {
                     if (isSplash) {
                         SplashScreen()
                     } else {
-                        if (true) {
-                            Column {
-                                Button(onClick = {
-                                    notificationHandler.showSimpleNotification(
-                                        title = "Simple Notification",
-                                        message = "Message or text with notification"
-                                    )
-                                }) {
-                                    Text("Show Notification")
+                        when (loginState) {
+                            LoginState.PATIENT -> CareSyncPatientAppScreens(
+                                onLogout = {
+                                    loginState = LoginState.UNKNOWN
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        LoginStateDataStore.saveLoginState(
+                                            context,
+                                            LoginState.UNKNOWN
+                                        )
+                                    }
                                 }
-                                Button(onClick = {
-                                    val tenSecondsInFuture = Calendar.getInstance().apply {
-                                        add(Calendar.SECOND, 10) // Schedule for 10 seconds later
+                            )
+
+                            LoginState.CAREGIVER -> CareGiverScreen(
+                                onLogout = {
+                                    loginState = LoginState.UNKNOWN
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        LoginStateDataStore.saveLoginState(
+                                            context,
+                                            LoginState.UNKNOWN
+                                        )
                                     }
-                                    notificationHandler.scheduleNotification(
-                                        tenSecondsInFuture.time,
-                                        "Custom Title",
-                                        "Custom Message!!!"
-                                    )
-                                    Toast.makeText(
-                                        context,
-                                        "Notification Scheduled!",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }) {
-                                    Text("Schedule Notification (10s)")
                                 }
-                            }
-                        } else {
-                            when (loginState) {
-                                LoginState.PATIENT -> CareSyncPatientAppScreens(
-                                    onLogout = {
-                                        loginState = LoginState.UNKNOWN
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            LoginStateDataStore.saveLoginState(
-                                                context,
-                                                LoginState.UNKNOWN
-                                            )
-                                        }
-                                    }
-                                )
+                            )
 
-                                LoginState.CAREGIVER -> CareGiverScreen(
-                                    onLogout = {
-                                        loginState = LoginState.UNKNOWN
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            LoginStateDataStore.saveLoginState(
-                                                context,
-                                                LoginState.UNKNOWN
-                                            )
-                                        }
+                            LoginState.UNKNOWN -> OnBoardingScreen(
+                                onLoginCareGiver = {
+                                    loginState = LoginState.CAREGIVER
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        LoginStateDataStore.saveLoginState(
+                                            context,
+                                            LoginState.CAREGIVER
+                                        )
                                     }
-                                )
-
-                                LoginState.UNKNOWN -> OnBoardingScreen(
-                                    onLoginCareGiver = {
-                                        loginState = LoginState.CAREGIVER
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            LoginStateDataStore.saveLoginState(
-                                                context,
-                                                LoginState.CAREGIVER
-                                            )
-                                        }
-                                    },
-                                    onLoginPatient = {
-                                        loginState = LoginState.PATIENT
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            LoginStateDataStore.saveLoginState(
-                                                context,
-                                                LoginState.PATIENT
-                                            )
-                                        }
+                                },
+                                onLoginPatient = {
+                                    loginState = LoginState.PATIENT
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        LoginStateDataStore.saveLoginState(
+                                            context,
+                                            LoginState.PATIENT
+                                        )
                                     }
-                                )
-                            }
+                                }
+                            )
                         }
                     }
                 }
