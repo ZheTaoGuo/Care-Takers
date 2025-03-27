@@ -1,13 +1,14 @@
 package com.example.caresync.model
 
 import android.icu.util.Calendar
+import com.example.caresync.utils.NotificationHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Date
 
 class MedicationRepository(private val medicationDao: MedicationDao) {
     // TODO(RAYNER): @ZheTao you need to be calling this when we add in new medications.
-    suspend fun insertMedicationWithDosages(medication: Medication) = withContext(Dispatchers.IO) {
+    suspend fun insertMedicationWithDosages(medication: Medication, notificationHandler: NotificationHandler) = withContext(Dispatchers.IO) {
         val medicationId = medicationDao.insertMedication(medication)
         val dosages = generateDosages(medication, medicationId)
         medicationDao.insertAllDosages(dosages)
@@ -17,6 +18,7 @@ class MedicationRepository(private val medicationDao: MedicationDao) {
             val scheduledNotifDate = dosage.scheduledDatetime
             val notifTitle = "Eat Your Meds!"
             val notifMessage = "${medication.name} to be taken now"
+            notificationHandler.scheduleNotification(scheduledNotifDate, title = notifTitle, message = notifMessage)
         }
     }
 

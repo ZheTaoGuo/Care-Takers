@@ -48,7 +48,6 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current
             var showSplash by remember { mutableStateOf(true) }
             var loginState by remember { mutableStateOf(LoginState.UNKNOWN) }
-            val notificationHandler = (context.applicationContext as CareSyncApplication).notificationHandler
 
             // Simulate loading for 2 seconds
             LaunchedEffect(Unit) {

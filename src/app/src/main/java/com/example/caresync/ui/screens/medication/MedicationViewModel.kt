@@ -23,13 +23,14 @@ import kotlinx.coroutines.flow.update
 import java.util.Date
 import com.example.caresync.model.MedicationDao
 import com.example.caresync.model.MedicationRepository
+import com.example.caresync.utils.NotificationHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 
-class MedicationViewModel(private val medicationDao: MedicationDao): ViewModel() {
+class MedicationViewModel(private val medicationDao: MedicationDao, private val notificationHandler: NotificationHandler): ViewModel() {
     private val _MedicationUIState = MutableStateFlow(MedicationUIState())
     val MedicationUIState: StateFlow<MedicationUIState> = _MedicationUIState.asStateFlow()
     val medicationRepository = MedicationRepository(medicationDao)
@@ -37,7 +38,7 @@ class MedicationViewModel(private val medicationDao: MedicationDao): ViewModel()
     fun addMedication(medication: Medication) {
         viewModelScope.launch(Dispatchers.IO) { // Run in IO thread
             try {
-                medicationRepository.insertMedicationWithDosages(medication)
+                medicationRepository.insertMedicationWithDosages(medication, notificationHandler)
                 _MedicationUIState.update { currentState ->
                     currentState.copy(medications = currentState.medications + medication)
                 }
@@ -58,7 +59,7 @@ class MedicationViewModel(private val medicationDao: MedicationDao): ViewModel()
         val factory : ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as CareSyncApplication)
-                MedicationViewModel(application.medicationDatabase.medicationDao())
+                MedicationViewModel(application.medicationDatabase.medicationDao(), application.notificationHandler)
             }
         }
     }

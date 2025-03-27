@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.caresync.CareSyncApplication
 import com.example.caresync.datasource.MedicationDataSource
 import com.example.caresync.utils.Converters
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,7 @@ abstract class MedicationDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): MedicationDatabase {
             return INSTANCE ?: synchronized(this) {
+                val notificationHandler = (context.applicationContext as CareSyncApplication).notificationHandler
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     MedicationDatabase::class.java,
@@ -38,7 +40,7 @@ abstract class MedicationDatabase : RoomDatabase() {
                                     if (dao.getMedicationCount() == 0) {
                                         val repository = MedicationRepository(dao)
                                         for (medication in MedicationDataSource.sampleMedications) {
-                                            repository.insertMedicationWithDosages(medication)
+                                            repository.insertMedicationWithDosages(medication, notificationHandler)
                                         }
                                     }
                                 }

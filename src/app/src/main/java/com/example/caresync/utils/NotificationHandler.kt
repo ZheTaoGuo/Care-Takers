@@ -45,7 +45,7 @@ class NotificationHandler(private val context: Context) {
 
         // Check if the scheduled time is in the past
         if (scheduledTime <= currentTime) {
-            Log.e("Alarm", "Cannot schedule notifications in the past!")
+            Log.w("Alarm", "Cannot schedule notifications in the past!")
             return // Exit early
         }
 
