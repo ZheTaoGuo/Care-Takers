@@ -39,9 +39,12 @@ class NotificationHandler(private val context: Context) {
         }
     }
 
-    fun scheduleNotification(timeInMillis: Long) {
+    fun scheduleNotification(timeInMillis: Long, title: String, message: String) {
         val alarmManager = context.getSystemService(AlarmManager::class.java)
-        val intent = Intent(context, NotificationReceiver::class.java)
+        val intent = Intent(context, NotificationReceiver::class.java).apply {
+            putExtra("NOTIFICATION_TITLE", title)
+            putExtra("NOTIFICATION_MESSAGE", message)
+        }
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -66,7 +69,7 @@ class NotificationHandler(private val context: Context) {
         )
     }
 
-    fun showSimpleNotification() {
+    fun showSimpleNotification(title: String, message: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -89,8 +92,8 @@ class NotificationHandler(private val context: Context) {
         } else {
             NotificationCompat.Builder(context)
         }
-            .setContentTitle("Simple Notification")
-            .setContentText("Message or text with notification")
+            .setContentTitle(title)
+            .setContentText(message)
             .setSmallIcon(R.drawable.default_medication)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)

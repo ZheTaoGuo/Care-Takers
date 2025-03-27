@@ -69,14 +69,23 @@ class MainActivity : ComponentActivity() {
                     } else {
                         if (true) {
                             Column {
-                                Button(onClick = { notificationHandler.showSimpleNotification() }) {
+                                Button(onClick = {
+                                    notificationHandler.showSimpleNotification(
+                                        title = "Simple Notification",
+                                        message = "Message or text with notification"
+                                    )
+                                }) {
                                     Text("Show Notification")
                                 }
                                 Button(onClick = {
                                     val calendar = Calendar.getInstance().apply {
                                         add(Calendar.SECOND, 10) // Schedule for 10 seconds later
                                     }
-                                    notificationHandler.scheduleNotification(calendar.timeInMillis)
+                                    notificationHandler.scheduleNotification(
+                                        calendar.timeInMillis,
+                                        "Custom Title",
+                                        "Custom Message!!!"
+                                    )
                                     Toast.makeText(
                                         context,
                                         "Notification Scheduled!",
