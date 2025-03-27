@@ -56,6 +56,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.accompanist.permissions)
+
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)

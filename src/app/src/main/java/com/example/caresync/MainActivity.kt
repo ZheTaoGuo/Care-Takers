@@ -1,5 +1,6 @@
 package com.example.caresync
 
+import RequestNotificationPermission
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +9,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,11 +29,14 @@ import com.example.caresync.ui.screens.CareSyncPatientAppScreens
 import com.example.caresync.ui.screens.caregiver.CareGiverScreen
 import com.example.caresync.ui.screens.onboarding.OnBoardingScreen
 import com.example.caresync.ui.theme.CareSyncTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -38,6 +44,7 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current
             var showSplash by remember { mutableStateOf(true) }
             var loginState by remember { mutableStateOf(LoginState.UNKNOWN) }
+            val notificationHandler = (context.applicationContext as CareSyncApplication).notificationHandler
 
             // Simulate loading for 2 seconds
             LaunchedEffect(Unit) {
@@ -49,43 +56,63 @@ class MainActivity : ComponentActivity() {
                 }
             }
             CareSyncTheme {
+                RequestNotificationPermission()
+
                 Crossfade(targetState = showSplash, label = "Screen Transition") { isSplash ->
                     if (isSplash) {
                         SplashScreen()
                     } else {
-                        when (loginState) {
-                            LoginState.PATIENT -> CareSyncPatientAppScreens(
-                                onLogout = {
-                                    loginState = LoginState.UNKNOWN
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        LoginStateDataStore.saveLoginState(context, LoginState.UNKNOWN)
+                        if (true) {
+                            Button(onClick = { notificationHandler.showSimpleNotification() }) {
+                                Text("Show Notification")
+                            }
+                        } else {
+                            when (loginState) {
+                                LoginState.PATIENT -> CareSyncPatientAppScreens(
+                                    onLogout = {
+                                        loginState = LoginState.UNKNOWN
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            LoginStateDataStore.saveLoginState(
+                                                context,
+                                                LoginState.UNKNOWN
+                                            )
+                                        }
                                     }
-                                }
-                            )
+                                )
 
-                            LoginState.CAREGIVER -> CareGiverScreen(
-                                onLogout = {
-                                    loginState = LoginState.UNKNOWN
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        LoginStateDataStore.saveLoginState(context, LoginState.UNKNOWN)
+                                LoginState.CAREGIVER -> CareGiverScreen(
+                                    onLogout = {
+                                        loginState = LoginState.UNKNOWN
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            LoginStateDataStore.saveLoginState(
+                                                context,
+                                                LoginState.UNKNOWN
+                                            )
+                                        }
                                     }
-                                }
-                            )
+                                )
 
-                            LoginState.UNKNOWN -> OnBoardingScreen(
-                                onLoginCareGiver = {
-                                    loginState = LoginState.CAREGIVER
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        LoginStateDataStore.saveLoginState(context, LoginState.CAREGIVER)
+                                LoginState.UNKNOWN -> OnBoardingScreen(
+                                    onLoginCareGiver = {
+                                        loginState = LoginState.CAREGIVER
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            LoginStateDataStore.saveLoginState(
+                                                context,
+                                                LoginState.CAREGIVER
+                                            )
+                                        }
+                                    },
+                                    onLoginPatient = {
+                                        loginState = LoginState.PATIENT
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            LoginStateDataStore.saveLoginState(
+                                                context,
+                                                LoginState.PATIENT
+                                            )
+                                        }
                                     }
-                                },
-                                onLoginPatient = {
-                                    loginState = LoginState.PATIENT
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        LoginStateDataStore.saveLoginState(context, LoginState.PATIENT)
-                                    }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
