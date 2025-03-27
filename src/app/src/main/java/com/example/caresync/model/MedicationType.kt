@@ -8,7 +8,8 @@ enum class MedicationType(val displayName: String) {
     CAPSULE("capsules"),
     SYRUP("ml"),
     DROPS("drops"),
-    SPRAY("sprays");
+    SPRAY("sprays"),
+    GEL("gels");
 
     @Composable
     fun getCardColor() = when (this) {
@@ -36,6 +37,11 @@ enum class MedicationType(val displayName: String) {
             MaterialTheme.colorScheme.errorContainer.value,
             MaterialTheme.colorScheme.error.value,
             MaterialTheme.colorScheme.onErrorContainer.value
+        )
+        GEL -> Triple(
+            MaterialTheme.colorScheme.inversePrimary.value,
+            MaterialTheme.colorScheme.primary.value,
+            MaterialTheme.colorScheme.onPrimaryContainer.value
         )
     }
 }

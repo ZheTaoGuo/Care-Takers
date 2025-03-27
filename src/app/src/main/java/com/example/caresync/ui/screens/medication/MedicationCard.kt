@@ -33,14 +33,13 @@ import java.util.Date
 @Composable
 fun MedicationCard(
     medication: Medication,
-    navigateToMedicationDetail: (Medication) -> Unit
+    modifier: Modifier
 ) {
     val (cardColor, boxColor, textColor) = medication.type.getCardColor()
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        onClick = { navigateToMedicationDetail(medication) },
         shape = RoundedCornerShape(30.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(cardColor),
@@ -69,6 +68,7 @@ fun MedicationCard(
                             MedicationType.SYRUP -> R.string.type_syrup
                             MedicationType.DROPS -> R.string.drops
                             MedicationType.SPRAY -> R.string.spray
+                            MedicationType.GEL -> R.string.gel
                         }
                     ).lowercase()
                 }"
@@ -96,6 +96,7 @@ fun MedicationCard(
                             MedicationType.SYRUP -> R.drawable.ic_syrup
                             MedicationType.DROPS -> R.drawable.ic_drops
                             MedicationType.SPRAY -> R.drawable.ic_spray
+                            MedicationType.GEL -> R.drawable.ic_gel
                         }
                     ),
                     contentDescription = stringResource(
@@ -105,6 +106,7 @@ fun MedicationCard(
                             MedicationType.SYRUP -> R.string.type_syrup
                             MedicationType.DROPS -> R.string.drops
                             MedicationType.SPRAY -> R.string.spray
+                            MedicationType.GEL -> R.string.gel
                         }
                     ),
                     modifier = Modifier.size(42.dp),
@@ -127,6 +129,7 @@ private fun MedicationCardTakenPreview() {
             totalDosage = 10,
             startDate = Date(),
             type = MedicationType.TABLET
-        )
-    ) { }
+        ),
+        modifier = TODO()
+    )
 }

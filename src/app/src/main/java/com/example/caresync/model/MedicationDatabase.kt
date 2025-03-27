@@ -8,6 +8,9 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.caresync.datasource.MedicationDataSource
 import com.example.caresync.utils.Converters
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 @Database(entities = [Medication::class, MedicationDosage::class], version = 1, exportSchema = false)
@@ -29,8 +32,8 @@ abstract class MedicationDatabase : RoomDatabase() {
                     .addCallback(object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
-                            Executors.newSingleThreadExecutor().execute {
-                                INSTANCE?.let { database ->
+                            INSTANCE?.let { database ->
+                                GlobalScope.launch(Dispatchers.IO) {
                                     val dao = database.medicationDao()
                                     if (dao.getMedicationCount() == 0) {
                                         val repository = MedicationRepository(dao)
