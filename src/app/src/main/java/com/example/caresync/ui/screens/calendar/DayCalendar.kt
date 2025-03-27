@@ -51,6 +51,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.caresync.datasource.MedicationDataSource
 import com.example.caresync.model.MedicationDosage
 import com.example.caresync.utils.addOneDay
+import com.example.caresync.utils.areSameDate
 import com.example.caresync.utils.formatDateWithDayOfWeek
 import com.example.caresync.utils.minusOneDay
 import kotlinx.coroutines.delay
@@ -120,21 +121,23 @@ fun DayCalendarView(
                 .fillMaxSize()
                 .background(color = Color.White)
                 .drawBehind {
-                    val hourHeight = (60 * minuteHeight).dp.toPx() // Height of each hour row
-                    val yOffset =
-                        ((currentHour - startHour) * hourHeight) + ((currentMinute / 60f) * hourHeight)
+                    if (areSameDate(curDate, Calendar.getInstance().time)) {
+                        val hourHeight = (60 * minuteHeight).dp.toPx() // Height of each hour row
+                        val yOffset =
+                            ((currentHour - startHour) * hourHeight) + ((currentMinute / 60f) * hourHeight)
 
-                    drawCircle(
-                        color = Color.Red,
-                        radius = 16f,
-                        center = Offset(0f, yOffset)
-                    )
-                    drawLine(
-                        color = Color.Red,
-                        start = Offset(0f, yOffset),
-                        end = Offset(size.width, yOffset),
-                        strokeWidth = 3.dp.toPx()
-                    )
+                        drawCircle(
+                            color = Color.Red,
+                            radius = 16f,
+                            center = Offset(0f, yOffset)
+                        )
+                        drawLine(
+                            color = Color.Red,
+                            start = Offset(0f, yOffset),
+                            end = Offset(size.width, yOffset),
+                            strokeWidth = 3.dp.toPx()
+                        )
+                    }
                 },
             contentPadding = PaddingValues(16.dp)
         ) {
