@@ -9,6 +9,13 @@ class MedicationRepository(private val medicationDao: MedicationDao) {
         val medicationId = medicationDao.insertMedication(medication)
         val dosages = generateDosages(medication, medicationId)
         medicationDao.insertAllDosages(dosages)
+
+        // TODO(RAYNER): Set up all notifications here. But will need to pass it in.
+        for (dosage in dosages) {
+            val scheduledNotifDate = dosage.scheduledDatetime
+            val notifTitle = "Eat Your Meds!"
+            val notifMessage = "${medication.name} to be taken now"
+        }
     }
 
     private fun generateDosages(medication: Medication, medicationId: Long): List<MedicationDosage> {
