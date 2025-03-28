@@ -96,6 +96,15 @@ class CalendarViewModel(private val medicationDao: MedicationDao) : ViewModel() 
         _isSheetVisible.value = false
     }
 
+    fun SetDosageToEdit(dosageToEdit: MedicationDosage, medicationName: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                dosageToEdit = dosageToEdit,
+                dosageToEditName = medicationName
+            )
+        }
+    }
+
     companion object {
         val factory : ViewModelProvider.Factory = viewModelFactory {
             initializer {

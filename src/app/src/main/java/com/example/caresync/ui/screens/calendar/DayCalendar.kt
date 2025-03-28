@@ -4,12 +4,10 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,21 +17,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
@@ -52,15 +46,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.caresync.datasource.MedicationDataSource
 import com.example.caresync.model.MedicationDosage
 import com.example.caresync.utils.addOneDay
 import com.example.caresync.utils.areSameDate
 import com.example.caresync.utils.formatDateWithDayOfWeek
+import com.example.caresync.utils.formatDateWithTime
 import com.example.caresync.utils.minusOneDay
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
@@ -86,6 +79,9 @@ fun DayCalendarView(
     isSheetVisible: Boolean,
     onBtmSheetShow: () -> Unit,
     onBtmSheetDismiss: () -> Unit,
+    setDosageToEdit: (MedicationDosage, String) -> Unit,
+    dosageToEdit: MedicationDosage?,
+    dosageToEditName: String?
 ) {
     val coroutineScope = rememberCoroutineScope() // Creates a coroutine scope for this composable
 
@@ -134,11 +130,16 @@ fun DayCalendarView(
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Sample Text")
-                Button({}) {
-                    Text("Sample Button")
+                if (dosageToEdit != null) {
+                    Text("Editing: ${dosageToEditName}")
+                    Text("Original Consumption Datetime: ${formatDateWithTime(dosageToEdit.scheduledDatetime)}")
+                    //Text("Postponement Datetime ${formatDateWithTime(???)}")
+                    Button(onClick = {
+                        // TODO: Postpone and set it. Create a new entry oso for it.
+                    }) {
+                        Text("Confirm Postponement")
+                    }
                 }
 
                 Button(onClick = {
@@ -248,8 +249,13 @@ fun DayCalendarView(
                                                 }
                                             },
                                             onLongPress = {
-                                                Log.i("DEBUG", "Detected long press on ${dosage.id}-$name")
-                                                onBtmSheetShow()
+                                                setDosageToEdit(dosage, name)
+                                                coroutineScope.launch {
+                                                    // TODO: Compute stuff and then open the btm sheet???
+                                                    // Do the heavy compute things here... for preview of where it would be to postpone the date.
+                                                }.invokeOnCompletion {
+                                                    onBtmSheetShow()
+                                                }
                                             },
                                             modifier = Modifier.weight(1f)
                                         )
@@ -327,6 +333,8 @@ fun DayCalendarViewPreview() {
 
     var currentDate by remember { mutableStateOf(Date()) }
     var showSheet by remember { mutableStateOf(false) }
+    var dosageToEdit by remember { mutableStateOf<MedicationDosage?>(null) }
+    var dosageToEditName by remember { mutableStateOf<String?>(null) }
 
     DayCalendarView(
         dosagesForDay = mockDosages,
@@ -348,7 +356,13 @@ fun DayCalendarViewPreview() {
         navPrevDay = { currentDate = minusOneDay(currentDate) },
         isSheetVisible = showSheet,
         onBtmSheetShow = { showSheet = true },
-        onBtmSheetDismiss = { showSheet = false }
+        onBtmSheetDismiss = { showSheet = false },
+        setDosageToEdit = { newDosageToEdit: MedicationDosage, name: String ->
+            dosageToEdit = newDosageToEdit
+            dosageToEditName = name
+        },
+        dosageToEdit = dosageToEdit,
+        dosageToEditName = dosageToEditName
     )
 
 // FOR DEBUGGING

@@ -32,7 +32,10 @@ fun CalendarScreen(
         navPrevDay = { viewModel.navigateToPrevDay() },
         isSheetVisible = isSheetVisible,
         onBtmSheetShow = { viewModel.showBtmSheet() },
-        onBtmSheetDismiss = { viewModel.dismissBtmSheet() }
+        onBtmSheetDismiss = { viewModel.dismissBtmSheet() },
+        setDosageToEdit = { newDosageToEdit, name -> viewModel.SetDosageToEdit(newDosageToEdit, name) },
+        dosageToEdit = uiState.dosageToEdit,
+        dosageToEditName = uiState.dosageToEditName,
     )
 }
 

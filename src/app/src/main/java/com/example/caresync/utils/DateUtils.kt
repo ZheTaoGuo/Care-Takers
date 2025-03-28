@@ -73,3 +73,8 @@ fun formatDateWithDayOfWeek(date: Date): String {
     return formatter.format(date)
 }
 
+fun formatDateWithTime(date: Date): String {
+    val formatter = SimpleDateFormat("dd-MM-yyyy: HH:mm", Locale.getDefault())
+    return formatter.format(date)
+}
+

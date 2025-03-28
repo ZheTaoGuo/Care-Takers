@@ -7,4 +7,6 @@ data class CalendarUiState (
     val endHour: Int = 23,
     val minuteHeight: Float = 1f,
     val currentDate: Date,
+    val dosageToEdit: MedicationDosage? = null,
+    val dosageToEditName: String? = null,
 )
