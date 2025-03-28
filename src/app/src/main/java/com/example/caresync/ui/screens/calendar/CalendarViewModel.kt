@@ -1,5 +1,6 @@
 package com.example.caresync.ui.screens.calendar
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -13,6 +14,7 @@ import com.example.caresync.model.MedicationDosage
 import com.example.caresync.model.MedicationRepository
 import com.example.caresync.ui.screens.currentRoute
 import com.example.caresync.utils.Clamp
+import com.example.caresync.utils.NotificationHandler
 import com.example.caresync.utils.addOneDay
 import com.example.caresync.utils.getDayBounds
 import com.example.caresync.utils.minusOneDay
@@ -25,7 +27,7 @@ import kotlinx.coroutines.flow.update
 import java.util.Calendar
 import java.util.Date
 
-class CalendarViewModel(private val medicationDao: MedicationDao) : ViewModel() {
+class CalendarViewModel(private val medicationDao: MedicationDao, private val notificationHandler: NotificationHandler) : ViewModel() {
     private val _uiState = MutableStateFlow(CalendarUiState(currentDate = Calendar.getInstance().time))
     val uiState: StateFlow<CalendarUiState> = _uiState.asStateFlow()
     private val _isSheetVisible = MutableStateFlow(false)
@@ -131,11 +133,29 @@ class CalendarViewModel(private val medicationDao: MedicationDao) : ViewModel() 
         return missedDosage.scheduledDatetime
     }
 
+    suspend fun postponeMissedDosage() {
+        if (uiState.value.dosageToEdit == null ||
+            uiState.value.dosageProposedPostponedDate == null) {
+            Log.e("PostponeDosage", "Unable to postpone dosage as one of the fields are null dosageToEdit == ${uiState.value.dosageToEdit}, dosageProposedPostponedDate == ${uiState.value.dosageProposedPostponedDate}")
+            return
+        } else {
+            val repository = MedicationRepository(medicationDao)
+            repository.postponeDosage(
+                uiState.value.dosageToEdit!!,
+                uiState.value.dosageProposedPostponedDate!!,
+                notificationHandler
+            )
+        }
+    }
+
     companion object {
         val factory : ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as CareSyncApplication)
-                CalendarViewModel(application.medicationDatabase.medicationDao())
+                CalendarViewModel(
+                    application.medicationDatabase.medicationDao(),
+                    application.notificationHandler
+                )
             }
         }
     }

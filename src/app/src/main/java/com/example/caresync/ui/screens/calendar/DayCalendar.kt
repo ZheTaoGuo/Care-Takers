@@ -1,9 +1,11 @@
 package com.example.caresync.ui.screens.calendar
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,6 +44,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -85,8 +88,10 @@ fun DayCalendarView(
     dosageToEditName: String?,
     dosageProposedPostponeDate: Date?,
     computeNextDosageDate: suspend (MedicationDosage) -> Date,
+    confirmPostponeDosage: suspend () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope() // Creates a coroutine scope for this composable
+    val context = LocalContext.current
 
     var currentTime by remember { mutableStateOf(getCurrentTime()) }
     // Update time every minute
@@ -133,24 +138,52 @@ fun DayCalendarView(
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (dosageToEdit != null) {
-                    Text("Editing: ${dosageToEditName}")
-                    Text("Original Consumption Datetime: ${formatDateWithTime(dosageToEdit.scheduledDatetime)}")
-                    Text("Postponement Datetime ${formatDateWithTime(dosageProposedPostponeDate ?: dosageToEdit.scheduledDatetime)}")
-                    Button(onClick = {
-                        // TODO: Postpone and set it. Create a new entry oso for it.
-                    }) {
-                        Text("Confirm Postponement")
-                    }
-                }
+                    Text(text = "Editing: ${dosageToEditName}",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(text = "Original Consumption Datetime:\n${formatDateWithTime(dosageToEdit.scheduledDatetime)}",
+                        fontSize = 20.sp)
+                    Text(text = "Postponement Datetime:\n${formatDateWithTime(dosageProposedPostponeDate ?: dosageToEdit.scheduledDatetime)}",
+                        fontSize = 20.sp)
+                    Row (
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    ) {
+                        Button(onClick = {
+                            coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
+                                onBtmSheetDismiss()
+                            }
+                        }) {
+                            Text("Dismiss")
+                        }
 
-                Button(onClick = {
-                    coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
-                        onBtmSheetDismiss()
+                        Button(onClick = {
+                            coroutineScope.launch {
+                                confirmPostponeDosage()
+                            }.invokeOnCompletion {
+                                Toast.makeText(context, "Postponed Dosage", Toast.LENGTH_SHORT).show()
+                                onBtmSheetDismiss()
+                            }
+                        }) {
+                            Text("Confirm Postponement")
+                        }
                     }
-                }) {
-                    Text("Dismiss")
+                } else {
+                    Text("ERROR")
+
+                    Button(onClick = {
+                        coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
+                            onBtmSheetDismiss()
+                        }
+                    }) {
+                        Text("Dismiss")
+                    }
                 }
             }
         }
@@ -280,6 +313,7 @@ fun DayCalendarView(
                                                         }
                                                     }
                                                 },
+                                                isRescheduled = dosage.isRescheduled,
                                                 modifier = Modifier.weight(1f)
                                             )
                                         } ?: run {
@@ -307,6 +341,7 @@ fun CalendarBlock(
     minuteHeight: Float,
     onCheckedChange: (Boolean) -> Unit,
     onLongPress: () -> Unit,
+    isRescheduled: Boolean,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -315,19 +350,21 @@ fun CalendarBlock(
             .clip(RoundedCornerShape(8.dp))
             .border(1.dp, Color.Black, RoundedCornerShape(8.dp))
             .height((58*minuteHeight).dp)
-            .background(Color.Blue.copy(alpha = 0.3f))
+            .background(if (isRescheduled) Color.Gray.copy(alpha = 0.3f) else Color.Blue.copy(alpha = 0.3f))
             .padding(8.dp)
     ) {
         Row {
-            CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
-                Checkbox(
-                    isDone,
-                    onCheckedChange = onCheckedChange,
-                    modifier = Modifier.padding(end = 4.dp)
-                )
+            if (!isRescheduled) {
+                CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+                    Checkbox(
+                        isDone,
+                        onCheckedChange = onCheckedChange,
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
+                }
             }
             Text(
-                text = "${title} [${hour}:${min}]",
+                text = "${if (isRescheduled) "rescheduled - " else ""}${title} [${hour}:${min}]",
                 color = Color.Black,
                 modifier = Modifier
                     .pointerInput(Unit) {
@@ -388,7 +425,8 @@ fun DayCalendarViewPreview() {
         dosageToEdit = dosageToEdit,
         dosageToEditName = dosageToEditName,
         dosageProposedPostponeDate = dosageToEdit?.scheduledDatetime ?: Date(),
-        computeNextDosageDate = { _ -> Date() } // Dummy function, can't implement in preview
+        computeNextDosageDate = { _ -> Date() }, // Dummy function, can't implement in preview
+        confirmPostponeDosage = {} // Dummy function, can't implement in preview
     )
 
 // FOR DEBUGGING

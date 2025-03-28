@@ -37,6 +37,7 @@ fun CalendarScreen(
         dosageToEditName = uiState.dosageToEditName,
         dosageProposedPostponeDate = uiState.dosageProposedPostponedDate,
         computeNextDosageDate = { dosage -> viewModel.computeDosagePostponementDate(dosage) },
+        confirmPostponeDosage = { viewModel.postponeMissedDosage() },
     )
 }
 

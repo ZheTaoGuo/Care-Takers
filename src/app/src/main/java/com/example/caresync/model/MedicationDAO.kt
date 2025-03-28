@@ -42,6 +42,9 @@ interface MedicationDao {
     @Query("UPDATE medicationDosages SET isDosageTaken = :isTaken WHERE id = :dosageId")
     suspend fun updateDosageStatus(dosageId: Long, isTaken: Boolean)
 
+    @Query("UPDATE medicationDosages SET isRescheduled = :isRescheduled WHERE id = :dosageId")
+    suspend fun updateDosageRescheduledStatus(dosageId: Long, isRescheduled: Boolean)
+
     @Query("SELECT * FROM medicationDosages WHERE scheduledDatetime BETWEEN :startOfDay AND :endOfDay")
     fun getDosagesForDate(startOfDay: Long, endOfDay: Long): Flow<List<MedicationDosage>>
 

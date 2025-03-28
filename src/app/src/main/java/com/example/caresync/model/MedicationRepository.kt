@@ -4,6 +4,7 @@ import android.icu.util.Calendar
 import com.example.caresync.utils.NotificationHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.nio.file.attribute.DosFileAttributes
 import java.util.Date
 
 class MedicationRepository(private val medicationDao: MedicationDao) {
@@ -87,5 +88,30 @@ class MedicationRepository(private val medicationDao: MedicationDao) {
             }
             calendar.add(Calendar.DATE, 1)  // Move to the next day
         }
+    }
+
+    suspend fun postponeDosage(missedDosage: MedicationDosage, newDate: Date, notificationHandler: NotificationHandler) {
+        // TODO(RAYNER): Value checking here
+
+        // NOTE(RAYNER): Update old dosage to say postponed.
+        medicationDao.updateDosageRescheduledStatus(missedDosage.id, true)
+
+        // NOTE(RAYNER): Create and add in new dosage
+        val newPostponedDosage = MedicationDosage(
+            medicationId = missedDosage.medicationId,
+            isDosageTaken = false,
+            scheduledDatetime = newDate,
+            isRescheduled = false
+        )
+        medicationDao.insertDosage(newPostponedDosage)
+
+        val medication = medicationDao.getMedicationById(newPostponedDosage.medicationId)
+        val medName = medication?.name ?: "NULL"
+
+        // NOTE(RAYNER): Schedule notification for the new one
+        val scheduledNotifDate = newPostponedDosage.scheduledDatetime
+        val notifTitle = "Eat Your Meds!"
+        val notifMessage = "$medName to be taken now"
+        notificationHandler.scheduleNotification(scheduledNotifDate, title = notifTitle, message = notifMessage)
     }
 }
