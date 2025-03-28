@@ -243,7 +243,6 @@ fun AddMedicationScreen(
                         coroutineScope.launch {
                             viewModel.addMedication(newMedication)
                             showSuccessMessage = true
-                            onNavigateBack()
                         }
                     } catch(e: Exception) {
                         Log.e("AddMedication", "Error adding medication", e)
