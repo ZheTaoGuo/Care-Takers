@@ -25,8 +25,11 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -68,6 +71,7 @@ fun getCurrentTime(): Pair<Int, Int> {
     return calendar.get(Calendar.HOUR_OF_DAY) to calendar.get(Calendar.MINUTE)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DayCalendarView(
     dosagesForDay: List<MedicationDosage>,
@@ -79,6 +83,9 @@ fun DayCalendarView(
     updateIsDosageTaken: suspend (Long, Boolean) -> Unit,
     navNextDay: () -> Unit,
     navPrevDay: () -> Unit,
+    isSheetVisible: Boolean,
+    onBtmSheetShow: () -> Unit,
+    onBtmSheetDismiss: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope() // Creates a coroutine scope for this composable
 
@@ -92,7 +99,58 @@ fun DayCalendarView(
         }
     }
 
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    LaunchedEffect(isSheetVisible) {
+        if (isSheetVisible) {
+            coroutineScope.launch { sheetState.show() }.invokeOnCompletion {
+                onBtmSheetShow()
+            }
+        } else {
+            coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
+                onBtmSheetDismiss()
+            }
+        }
+    }
+
     val (currentHour, currentMinute) = currentTime
+
+    if (isSheetVisible) {
+        ModalBottomSheet(
+            onDismissRequest = onBtmSheetDismiss,
+            sheetState = sheetState,
+            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+            containerColor = MaterialTheme.colorScheme.surface,
+            tonalElevation = 16.dp,
+            dragHandle = {
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .width(50.dp)
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(50))
+                        .background(MaterialTheme.colorScheme.primary)
+                )
+            }
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Sample Text")
+                Button({}) {
+                    Text("Sample Button")
+                }
+
+                Button(onClick = {
+                    coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
+                        onBtmSheetDismiss()
+                    }
+                }) {
+                    Text("Dismiss")
+                }
+            }
+        }
+    }
 
     Column {
         Row(
@@ -191,6 +249,7 @@ fun DayCalendarView(
                                             },
                                             onLongPress = {
                                                 Log.i("DEBUG", "Detected long press on ${dosage.id}-$name")
+                                                onBtmSheetShow()
                                             },
                                             modifier = Modifier.weight(1f)
                                         )
@@ -267,6 +326,7 @@ fun DayCalendarViewPreview() {
     }
 
     var currentDate by remember { mutableStateOf(Date()) }
+    var showSheet by remember { mutableStateOf(false) }
 
     DayCalendarView(
         dosagesForDay = mockDosages,
@@ -285,7 +345,10 @@ fun DayCalendarViewPreview() {
             }
         },
         navNextDay = { currentDate = addOneDay(currentDate) },
-        navPrevDay = { currentDate = minusOneDay(currentDate) }
+        navPrevDay = { currentDate = minusOneDay(currentDate) },
+        isSheetVisible = showSheet,
+        onBtmSheetShow = { showSheet = true },
+        onBtmSheetDismiss = { showSheet = false }
     )
 
 // FOR DEBUGGING

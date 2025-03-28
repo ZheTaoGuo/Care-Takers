@@ -1,6 +1,7 @@
 package com.example.caresync.ui.screens.calendar
 
 import android.text.format.DateUtils
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -27,6 +28,8 @@ import java.util.Date
 class CalendarViewModel(private val medicationDao: MedicationDao) : ViewModel() {
     private val _uiState = MutableStateFlow(CalendarUiState(currentDate = Calendar.getInstance().time))
     val uiState: StateFlow<CalendarUiState> = _uiState.asStateFlow()
+    private val _isSheetVisible = MutableStateFlow(false)
+    val isSheetVisible: StateFlow<Boolean> = _isSheetVisible.asStateFlow()
 
     fun updateStartHour(startHour: Int) {
         _uiState.update { currentState ->
@@ -83,6 +86,14 @@ class CalendarViewModel(private val medicationDao: MedicationDao) : ViewModel() 
                 currentDate = nextDayDate
             )
         }
+    }
+
+    fun showBtmSheet() {
+        _isSheetVisible.value = true
+    }
+
+    fun dismissBtmSheet() {
+        _isSheetVisible.value = false
     }
 
     companion object {

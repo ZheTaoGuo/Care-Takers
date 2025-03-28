@@ -15,6 +15,7 @@ fun CalendarScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val dosagesForDay by viewModel.getDosagesForDate(uiState.currentDate).collectAsState(initial = emptyList())
+    val isSheetVisible by viewModel.isSheetVisible.collectAsState()
     DayCalendarView(
         dosagesForDay = dosagesForDay,
         curDate = uiState.currentDate,
@@ -28,7 +29,10 @@ fun CalendarScreen(
             viewModel.updateDosageTaken(dosageId, isChecked)
         },
         navNextDay = { viewModel.navigateToNextDay() },
-        navPrevDay = { viewModel.navigateToPrevDay() }
+        navPrevDay = { viewModel.navigateToPrevDay() },
+        isSheetVisible = isSheetVisible,
+        onBtmSheetShow = { viewModel.showBtmSheet() },
+        onBtmSheetDismiss = { viewModel.dismissBtmSheet() }
     )
 }
 
