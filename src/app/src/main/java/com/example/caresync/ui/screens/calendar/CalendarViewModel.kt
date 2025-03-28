@@ -81,9 +81,9 @@ class CalendarViewModel(private val medicationDao: MedicationDao) : ViewModel() 
 
     fun navigateToPrevDay() {
         _uiState.update { currentState ->
-            val nextDayDate = minusOneDay(currentState.currentDate)
+            val preDayDate = minusOneDay(currentState.currentDate)
             currentState.copy(
-                currentDate = nextDayDate
+                currentDate = preDayDate
             )
         }
     }

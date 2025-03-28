@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -155,114 +156,136 @@ fun DayCalendarView(
         }
     }
 
-    Column {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .background(color = Color.Gray.copy(alpha = 0.3f))
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-        ) {
-            Button(onClick = navPrevDay) {
-                Text("<")
+    key(curDate) { // Use key modifier to ensure full recomposition whenever `curDate` changes
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .background(color = Color.Gray.copy(alpha = 0.3f))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                Button(onClick = navPrevDay) {
+                    Text("<")
+                }
+                Text(
+                    text = formatDateWithDayOfWeek(curDate),
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                )
+                Button(onClick = navNextDay) {
+                    Text(">")
+                }
             }
-            Text(
-                text = formatDateWithDayOfWeek(curDate),
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
-            )
-            Button(onClick = navNextDay) {
-                Text(">")
-            }
-        }
 
-        HorizontalDivider(thickness = 1.dp, color = Color.Gray.copy(alpha = 0.5f))
+            HorizontalDivider(thickness = 1.dp, color = Color.Gray.copy(alpha = 0.5f))
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color.White)
-                .drawBehind {
-                    if (areSameDate(curDate, Calendar.getInstance().time)) {
-                        val hourHeight = (60 * minuteHeight).dp.toPx() // Height of each hour row
-                        val yOffset =
-                            ((currentHour - startHour) * hourHeight) + ((currentMinute / 60f) * hourHeight)
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.White)
+                    .drawBehind {
+                        if (areSameDate(curDate, Calendar.getInstance().time)) {
+                            val hourHeight =
+                                (60 * minuteHeight).dp.toPx() // Height of each hour row
+                            val yOffset =
+                                ((currentHour - startHour) * hourHeight) + ((currentMinute / 60f) * hourHeight)
 
-                        drawCircle(
-                            color = Color.Red,
-                            radius = 16f,
-                            center = Offset(0f, yOffset)
-                        )
-                        drawLine(
-                            color = Color.Red,
-                            start = Offset(0f, yOffset),
-                            end = Offset(size.width, yOffset),
-                            strokeWidth = 3.dp.toPx()
-                        )
-                    }
-                },
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            items(24) { hour ->
-                if (hour in startHour..endHour) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height((60 * minuteHeight).dp) // Adjust height for different time resolutions
-                            .drawBehind {
-                                drawLine(
-                                    color = Color.Gray.copy(alpha = 0.5f),
-                                    start = Offset(0f, 0f),
-                                    end = Offset(size.width, 0f),
-                                    strokeWidth = 1.dp.toPx()
-                                )
-                            }
-                    ) {
-                        Row {
-                            Text(
-                                text = String.format("%02d:00", hour),
-                                modifier = Modifier
-                                    .padding(start = 8.dp, end = 8.dp, top = 8.dp)
+                            drawCircle(
+                                color = Color.Red,
+                                radius = 16f,
+                                center = Offset(0f, yOffset)
                             )
+                            drawLine(
+                                color = Color.Red,
+                                start = Offset(0f, yOffset),
+                                end = Offset(size.width, yOffset),
+                                strokeWidth = 3.dp.toPx()
+                            )
+                        }
+                    },
+                contentPadding = PaddingValues(16.dp)
+            ) {
+                items(24) { hour ->
+                    if (hour in startHour..endHour) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height((60 * minuteHeight).dp) // Adjust height for different time resolutions
+                                .drawBehind {
+                                    drawLine(
+                                        color = Color.Gray.copy(alpha = 0.5f),
+                                        start = Offset(0f, 0f),
+                                        end = Offset(size.width, 0f),
+                                        strokeWidth = 1.dp.toPx()
+                                    )
+                                }
+                        ) {
+                            Row {
+                                Text(
+                                    text = String.format("%02d:00", hour),
+                                    modifier = Modifier
+                                        .padding(start = 8.dp, end = 8.dp, top = 8.dp)
+                                )
 
-                            val dosagesForThisHour = dosagesForDay.filter { it.hour == hour }
-                            if (dosagesForThisHour.isNotEmpty()) {
-                                dosagesForThisHour.forEach { dosage ->
-                                    // Fetch the medication name asynchronously
-                                    var medicationName by remember { mutableStateOf<String?>(null) }
+                                val dosagesForThisHour = dosagesForDay.filter { it.hour == hour }
+                                if (dosagesForThisHour.isNotEmpty()) {
+                                    dosagesForThisHour.forEach { dosage ->
+                                        // Fetch the medication name asynchronously
+                                        var medicationName by remember {
+                                            mutableStateOf<String?>(
+                                                null
+                                            )
+                                        }
 
-                                    // Call getMedicationName only when dosage changes
-                                    LaunchedEffect(dosage.medicationId) {
-                                        medicationName = getMedicationName(dosage.medicationId)
-                                    }
+                                        // Call getMedicationName only when dosage changes
+                                        LaunchedEffect(dosage.medicationId) {
+                                            medicationName = getMedicationName(dosage.medicationId)
+                                        }
 
-                                    // Show the dosage block only when medication name is available
-                                    medicationName?.let { name ->
-                                        CalendarBlock(
-                                            title = name,
-                                            hour = dosage.hour,
-                                            min = dosage.minute,
-                                            isDone = dosage.isDosageTaken,
-                                            minuteHeight = minuteHeight,
-                                            onCheckedChange = { isChecked ->
-                                                coroutineScope.launch {
-                                                    updateIsDosageTaken(dosage.id, isChecked)
-                                                }
-                                            },
-                                            onLongPress = {
-                                                setDosageToEdit(dosage, name)
-                                                coroutineScope.launch {
-                                                    computeNextDosageDate(dosage)
-                                                }.invokeOnCompletion {
-                                                    onBtmSheetShow()
-                                                }
-                                            },
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                    } ?: run {
-                                        // You can show a loading spinner or something until the medication name is loaded
-                                        Text("Loading...")
+                                        // Show the dosage block only when medication name is available
+                                        medicationName?.let { name ->
+                                            CalendarBlock(
+                                                title = name,
+                                                hour = dosage.hour,
+                                                min = dosage.minute,
+                                                isDone = dosage.isDosageTaken,
+                                                minuteHeight = minuteHeight,
+                                                onCheckedChange = { isChecked ->
+                                                    coroutineScope.launch {
+                                                        updateIsDosageTaken(dosage.id, isChecked)
+                                                    }
+                                                },
+                                                onLongPress = {
+//                                                    Log.i(
+//                                                        "DEBUG",
+//                                                        "Checking if time in the past: ${dosage.scheduledDatetime.time < System.currentTimeMillis()}"
+//                                                    )
+//                                                    Log.i(
+//                                                        "DEBUG",
+//                                                        "schedDate: ${formatDateWithTime(dosage.scheduledDatetime)}, date: ${
+//                                                            formatDateWithTime(Date())
+//                                                        }, currentTime == ${dosage.scheduledDatetime.time}"
+//                                                    )
+                                                    val canPostpone = !dosage.isDosageTaken &&
+                                                            !dosage.isRescheduled &&
+                                                            dosage.scheduledDatetime.time < System.currentTimeMillis()
+                                                    if (canPostpone) {
+                                                        setDosageToEdit(dosage, name)
+                                                        coroutineScope.launch {
+                                                            computeNextDosageDate(dosage)
+                                                        }.invokeOnCompletion {
+                                                            onBtmSheetShow()
+                                                        }
+                                                    }
+                                                },
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                        } ?: run {
+                                            // You can show a loading spinner or something until the medication name is loaded
+                                            Text("Loading...")
+                                        }
                                     }
                                 }
                             }
