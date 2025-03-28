@@ -7,16 +7,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.caresync.ui.screens.BottomNavItem
 import com.example.caresync.ui.screens.CareSyncPatientAppScreens
-import java.util.Calendar
 
 @Composable
 fun CalendarScreen(
     viewModel: CalendarViewModel = viewModel(factory = CalendarViewModel.factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val dosagesForDay by viewModel.getDosagesForDate(Calendar.getInstance().time).collectAsState(initial = emptyList())
+    val dosagesForDay by viewModel.getDosagesForDate(uiState.currentDate).collectAsState(initial = emptyList())
+    val isSheetVisible by viewModel.isSheetVisible.collectAsState()
     DayCalendarView(
         dosagesForDay = dosagesForDay,
+        curDate = uiState.currentDate,
         minuteHeight = uiState.minuteHeight,
         startHour = uiState.startHour,
         endHour = uiState.endHour,
@@ -25,7 +26,18 @@ fun CalendarScreen(
         },
         updateIsDosageTaken = { dosageId, isChecked ->
             viewModel.updateDosageTaken(dosageId, isChecked)
-        }
+        },
+        navNextDay = { viewModel.navigateToNextDay() },
+        navPrevDay = { viewModel.navigateToPrevDay() },
+        isSheetVisible = isSheetVisible,
+        onBtmSheetShow = { viewModel.showBtmSheet() },
+        onBtmSheetDismiss = { viewModel.dismissBtmSheet() },
+        setDosageToEdit = { newDosageToEdit, name -> viewModel.setDosageToEdit(newDosageToEdit, name) },
+        dosageToEdit = uiState.dosageToEdit,
+        dosageToEditName = uiState.dosageToEditName,
+        dosageProposedPostponeDate = uiState.dosageProposedPostponedDate,
+        computeNextDosageDate = { dosage -> viewModel.computeDosagePostponementDate(dosage) },
+        confirmPostponeDosage = { viewModel.postponeMissedDosage() },
     )
 }
 

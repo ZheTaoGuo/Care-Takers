@@ -23,7 +23,10 @@ object MedicationDataSource {
     val sampleMedicationDosages = listOf(
         MedicationDosage( 1, medicationId = 1, isDosageTaken = false, scheduledDatetime = getTodayWithSpecifiedTime(8, 30), isRescheduled = false),
         MedicationDosage( 2, medicationId = 1, isDosageTaken = false, scheduledDatetime = getTodayWithSpecifiedTime(13, 0), isRescheduled = false),
-        MedicationDosage( 3, medicationId = 1, isDosageTaken = false, scheduledDatetime = getTodayWithSpecifiedTime(20, 45), isRescheduled = false),
+        MedicationDosage( 3, medicationId = 2, isDosageTaken = false, scheduledDatetime = getTodayWithSpecifiedTime(13, 0), isRescheduled = false),
+        MedicationDosage( 4, medicationId = 3, isDosageTaken = false, scheduledDatetime = getTodayWithSpecifiedTime(20, 45), isRescheduled = false),
+        MedicationDosage( 5, medicationId = 3, isDosageTaken = false, scheduledDatetime = getTodayWithSpecifiedTime(20, 45), isRescheduled = false),
+        MedicationDosage( 6, medicationId = 3, isDosageTaken = false, scheduledDatetime = getTodayWithSpecifiedTime(20, 45), isRescheduled = false),
     )
 
     // Function to get medication name by ID
