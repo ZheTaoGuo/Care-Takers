@@ -7,7 +7,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.caresync.ui.screens.BottomNavItem
 import com.example.caresync.ui.screens.CareSyncPatientAppScreens
-import java.util.Calendar
 
 @Composable
 fun CalendarScreen(
@@ -33,9 +32,11 @@ fun CalendarScreen(
         isSheetVisible = isSheetVisible,
         onBtmSheetShow = { viewModel.showBtmSheet() },
         onBtmSheetDismiss = { viewModel.dismissBtmSheet() },
-        setDosageToEdit = { newDosageToEdit, name -> viewModel.SetDosageToEdit(newDosageToEdit, name) },
+        setDosageToEdit = { newDosageToEdit, name -> viewModel.setDosageToEdit(newDosageToEdit, name) },
         dosageToEdit = uiState.dosageToEdit,
         dosageToEditName = uiState.dosageToEditName,
+        dosageProposedPostponeDate = uiState.dosageProposedPostponedDate,
+        computeNextDosageDate = { dosage -> viewModel.computeDosagePostponementDate(dosage) },
     )
 }
 

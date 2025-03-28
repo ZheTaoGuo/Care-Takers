@@ -59,4 +59,33 @@ class MedicationRepository(private val medicationDao: MedicationDao) {
             isRescheduled = false
         )
     }
+
+    fun findNextAvailableSlot(
+        missedDosage: MedicationDosage,
+        medication: Medication,
+        existingDosages: List<MedicationDosage>
+    ): Date {
+        val calendar = Calendar.getInstance().apply { time = missedDosage.scheduledDatetime }
+        val dosesForTheDay = when (medication.frequency) {
+            Frequency.ONCE -> listOf(12 to 0)  // 12:00 PM
+            Frequency.TWICE -> listOf(8 to 0, 20 to 0)  // 8:00 AM, 8:00 PM
+            Frequency.THRICE -> listOf(8 to 0, 14 to 0, 20 to 0)  // 8:00 AM, 2:00 PM, 8:00 PM
+        }
+
+        while (true) {
+            for ((hour, minute) in dosesForTheDay) {
+                val candidateTime = Calendar.getInstance().apply {
+                    time = calendar.time
+                    set(Calendar.HOUR_OF_DAY, hour)
+                    set(Calendar.MINUTE, minute)
+                }.time
+
+                if (candidateTime.after(missedDosage.scheduledDatetime) &&
+                    existingDosages.none { it.scheduledDatetime == candidateTime }) {
+                    return candidateTime
+                }
+            }
+            calendar.add(Calendar.DATE, 1)  // Move to the next day
+        }
+    }
 }

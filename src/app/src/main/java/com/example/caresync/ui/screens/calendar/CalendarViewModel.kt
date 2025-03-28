@@ -1,7 +1,5 @@
 package com.example.caresync.ui.screens.calendar
 
-import android.text.format.DateUtils
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -12,15 +10,17 @@ import com.example.caresync.model.CalendarUiState
 import com.example.caresync.model.Medication
 import com.example.caresync.model.MedicationDao
 import com.example.caresync.model.MedicationDosage
+import com.example.caresync.model.MedicationRepository
+import com.example.caresync.ui.screens.currentRoute
 import com.example.caresync.utils.Clamp
 import com.example.caresync.utils.addOneDay
 import com.example.caresync.utils.getDayBounds
 import com.example.caresync.utils.minusOneDay
-import com.google.maps.android.compose.currentCameraPositionState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import java.util.Calendar
 import java.util.Date
@@ -96,13 +96,39 @@ class CalendarViewModel(private val medicationDao: MedicationDao) : ViewModel() 
         _isSheetVisible.value = false
     }
 
-    fun SetDosageToEdit(dosageToEdit: MedicationDosage, medicationName: String) {
+    fun setDosageToEdit(dosageToEdit: MedicationDosage, medicationName: String) {
         _uiState.update { currentState ->
             currentState.copy(
                 dosageToEdit = dosageToEdit,
                 dosageToEditName = medicationName
             )
         }
+    }
+
+    fun setProposedPostponementDate(newDate: Date) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                dosageProposedPostponedDate = newDate
+            )
+        }
+    }
+
+    suspend fun computeDosagePostponementDate(missedDosage: MedicationDosage): Date {
+        val medication: Medication? = medicationDao.getMedicationById(missedDosage.medicationId)
+        if (medication != null) {
+            val dosages: List<MedicationDosage> = medicationDao.getDosagesForMedication(medication.id).first()
+            val repository: MedicationRepository = MedicationRepository(medicationDao)
+            val postponedDate: Date = repository.findNextAvailableSlot(
+                missedDosage = missedDosage,
+                medication = medication,
+                existingDosages = dosages
+            )
+
+            setProposedPostponementDate(postponedDate)
+            return postponedDate
+        }
+
+        return missedDosage.scheduledDatetime
     }
 
     companion object {

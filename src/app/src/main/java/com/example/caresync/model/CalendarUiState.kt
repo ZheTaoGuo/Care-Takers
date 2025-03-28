@@ -9,4 +9,5 @@ data class CalendarUiState (
     val currentDate: Date,
     val dosageToEdit: MedicationDosage? = null,
     val dosageToEditName: String? = null,
+    val dosageProposedPostponedDate: Date? = null,
 )

@@ -81,7 +81,9 @@ fun DayCalendarView(
     onBtmSheetDismiss: () -> Unit,
     setDosageToEdit: (MedicationDosage, String) -> Unit,
     dosageToEdit: MedicationDosage?,
-    dosageToEditName: String?
+    dosageToEditName: String?,
+    dosageProposedPostponeDate: Date?,
+    computeNextDosageDate: suspend (MedicationDosage) -> Date,
 ) {
     val coroutineScope = rememberCoroutineScope() // Creates a coroutine scope for this composable
 
@@ -134,7 +136,7 @@ fun DayCalendarView(
                 if (dosageToEdit != null) {
                     Text("Editing: ${dosageToEditName}")
                     Text("Original Consumption Datetime: ${formatDateWithTime(dosageToEdit.scheduledDatetime)}")
-                    //Text("Postponement Datetime ${formatDateWithTime(???)}")
+                    Text("Postponement Datetime ${formatDateWithTime(dosageProposedPostponeDate ?: dosageToEdit.scheduledDatetime)}")
                     Button(onClick = {
                         // TODO: Postpone and set it. Create a new entry oso for it.
                     }) {
@@ -251,8 +253,7 @@ fun DayCalendarView(
                                             onLongPress = {
                                                 setDosageToEdit(dosage, name)
                                                 coroutineScope.launch {
-                                                    // TODO: Compute stuff and then open the btm sheet???
-                                                    // Do the heavy compute things here... for preview of where it would be to postpone the date.
+                                                    computeNextDosageDate(dosage)
                                                 }.invokeOnCompletion {
                                                     onBtmSheetShow()
                                                 }
@@ -362,7 +363,9 @@ fun DayCalendarViewPreview() {
             dosageToEditName = name
         },
         dosageToEdit = dosageToEdit,
-        dosageToEditName = dosageToEditName
+        dosageToEditName = dosageToEditName,
+        dosageProposedPostponeDate = dosageToEdit?.scheduledDatetime ?: Date(),
+        computeNextDosageDate = { _ -> Date() } // Dummy function, can't implement in preview
     )
 
 // FOR DEBUGGING
