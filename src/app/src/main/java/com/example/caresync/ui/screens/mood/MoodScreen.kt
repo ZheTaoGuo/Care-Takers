@@ -53,7 +53,7 @@ fun MoodScreen() {
                 ) {
                     items(moodEntries.sortedByDescending { it.date }) { entry ->
                         MoodEntryItem(entry)
-                        Divider()
+                        HorizontalDivider()
                     }
                 }
             }
