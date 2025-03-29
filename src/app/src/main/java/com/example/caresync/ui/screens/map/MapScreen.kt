@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +23,9 @@ import com.google.maps.android.compose.*
 @Composable
 fun MapScreen(viewModel: MapViewModel = remember { MapViewModel() }) {
     val context = LocalContext.current
+
+    var selectedClinic by remember { mutableStateOf<Clinic?>(null) }
+    var selectedFilter by remember { mutableStateOf(StockFilter.ALL) }
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(viewModel.defaultLocation, 12f)
@@ -50,6 +54,7 @@ fun MapScreen(viewModel: MapViewModel = remember { MapViewModel() }) {
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
+
         Box(modifier = Modifier.fillMaxSize()) {
             // Google Map
             GoogleMap(
@@ -67,35 +72,57 @@ fun MapScreen(viewModel: MapViewModel = remember { MapViewModel() }) {
                 }
             }
 
-            // Updated ClinicList with Proper Callback
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp)
+            ) {
+                FilterBar(selectedFilter) {
+                    selectedFilter = it
+                }
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 16.dp)
             ) {
-                var selectedClinic by remember { mutableStateOf<Clinic?>(null) }
-
-                LaunchedEffect(selectedClinic) {
-                    selectedClinic?.let { clinic ->
-                        cameraPositionState.animate(
-                            update = CameraUpdateFactory.newLatLngZoom(clinic.location, 15f),
-                            durationMs = 800
-                        )
-                    }
-                }
-
-                ClinicList(viewModel) { clinic ->
+                ClinicList(viewModel, selectedFilter) { clinic ->
                     selectedClinic = clinic
                 }
+            }
+        }
+
+        // Move camera when a clinic is selected
+        LaunchedEffect(selectedClinic) {
+            selectedClinic?.let { clinic ->
+                cameraPositionState.animate(
+                    update = CameraUpdateFactory.newLatLngZoom(clinic.location, 15f),
+                    durationMs = 800
+                )
             }
         }
     }
 }
 
 @Composable
-fun ClinicList(viewModel: MapViewModel, onClinicClick: (Clinic) -> Unit) {
+fun ClinicList(
+    viewModel: MapViewModel,
+    selectedFilter: StockFilter,
+    onClinicClick: (Clinic) -> Unit
+) {
     var expandedClinic by remember { mutableStateOf<Clinic?>(null) }
+
+    val filteredClinics = viewModel.clinicLocations.filter { clinic ->
+        when (selectedFilter) {
+            StockFilter.ALL -> true
+            StockFilter.AVAILABLE -> clinic.stockStatus == StockStatus.AVAILABLE
+            StockFilter.LIMITED -> clinic.stockStatus == StockStatus.LIMITED
+            StockFilter.OUT_OF_STOCK -> clinic.stockStatus == StockStatus.OUT_OF_STOCK
+        }
+    }
 
     LazyRow(
         modifier = Modifier
@@ -103,7 +130,7 @@ fun ClinicList(viewModel: MapViewModel, onClinicClick: (Clinic) -> Unit) {
             .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(viewModel.clinicLocations) { clinic ->
+        items(filteredClinics) { clinic ->
             val isExpanded = expandedClinic == clinic
             val animatedHeight by animateDpAsState(
                 targetValue = if (isExpanded) 200.dp else 120.dp,
@@ -115,8 +142,8 @@ fun ClinicList(viewModel: MapViewModel, onClinicClick: (Clinic) -> Unit) {
                     .height(animatedHeight)
                     .width(220.dp)
                     .clickable {
-                        expandedClinic = if (isExpanded) null else clinic // Toggle expansion
-                        onClinicClick(clinic) // Move map to this clinic
+                        expandedClinic = if (isExpanded) null else clinic
+                        onClinicClick(clinic)
                     }
             ) {
                 ClinicItem(

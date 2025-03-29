@@ -23,3 +23,10 @@ enum class ClinicStatus {
 enum class StockStatus {
     AVAILABLE, LIMITED, OUT_OF_STOCK
 }
+
+enum class StockFilter(val label: String) {
+    ALL("All"),
+    AVAILABLE("Available"),
+    LIMITED("Limited"),
+    OUT_OF_STOCK("Out of Stock")
+}
