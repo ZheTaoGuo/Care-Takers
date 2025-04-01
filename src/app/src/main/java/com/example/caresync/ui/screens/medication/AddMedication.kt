@@ -212,7 +212,7 @@ fun AddMedicationScreen(
             Spacer(modifier = Modifier.padding(4.dp))
 
             Column {
-                Text("Frequency", fontWeight = FontWeight.Medium)
+                Text("Medication Type", fontWeight = FontWeight.Medium)
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
