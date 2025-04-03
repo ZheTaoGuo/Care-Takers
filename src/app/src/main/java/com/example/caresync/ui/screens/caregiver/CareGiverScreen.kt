@@ -95,7 +95,7 @@ fun CareGiverDashboard(navController: NavHostController) {
 
                     Text(
                         text = buildAnnotatedString {
-                            append("The right medicine, at the ")
+                            append("The right medicine,\n at the ")
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                                 append("right time")
                             }
