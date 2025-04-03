@@ -61,9 +61,15 @@ CareSync is a simple yet powerful mobile app that helps patients manage their me
 
 At its heart, CareSync is about timing, trust, and togetherness:
 
-- Patients receive timely medication reminders.
-- Caregivers can monitor adherence, moods, and routines.
-- Everyone involved feels more confident and connected.
+- 💊 Medication Tracking – Patients can log all their medications with dosage and timing details.
+- 🔔 Smart Reminders – Users get nudges when it’s time to take their meds.
+- 📈 Adherence Analytics – Donut charts and stats show how well patients are following their regimens.
+- 😊 Mood Tracking – Users input their daily mood, visualized in a word cloud to spot emotional patterns.
+- 🩺 Digital Health Card – Displays allergies, conditions, and medications in one place for emergencies or checkups.
+- 🧑‍⚕️ Caregiver Access – Caregivers can view patient profiles, medication logs, and mood summaries.
+- 🗺️ Nearby Pharmacies – An integrated map shows where to get medication refills quickly and easily.
+
+Whether you're managing your own care or helping someone else, CareSync brings clarity and calm to daily health routines.
 
 ### 🖥️ System Diagram
 
