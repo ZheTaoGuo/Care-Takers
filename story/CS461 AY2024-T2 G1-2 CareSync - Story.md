@@ -168,11 +168,11 @@ What I’m most proud of is how I was able to connect multiple moving parts — 
 
 ### Jared Choy
 
-I was primarily responsible for the Mood Tracking feature in CareSync. I designed the mood input interface and implemented the modal that allows users to record their emotions. Beyond that, I also took the lead in conceptualizing and directing our story video — crafting the overall narrative, planning out each scene, and making sure it felt engaging and human. I also helped with acting and coordinating filming sessions with the team.
+I was in charge of creating the mood feature which allowed the user to input how they were feeling that day. I wanted to create something that was both cute yet useful and had to integrate together with the mood cloud that was developed by another member. Outside of the coding i also was the one who came up with the story video's content and lead the filming/directing
 
-Through this project, I learned how to implement MVVM architecture using Jetpack Compose and gained hands-on experience in managing UI state, ViewModels, and composables. It was my first time working on a full Android app end-to-end, and it gave me a much deeper understanding of how to build features that are modular, testable, and user-friendly. I also grew creatively through directing and scripting the video, which helped me connect software with storytelling.
+During this project, even though the feature i was handling is fairly simple and isolated in nature. I was able to try my hand in creating the different components that make up the MVVM design pattern. Beyond that i was also able to experiment with using preferences as a means to have persistent storage. Although it semeed like a misuse of the preferences. Thus i decided to keep it simple and not have persistent storage.
 
-What I’m most proud of is seeing the mood feature come to life — especially the moment the modal worked smoothly for the first time. It may seem like a small thing, but it made me realize how far I’ve come as a developer. Contributing both to the app and to the video made this project incredibly meaningful, and I’m proud of how I was able to apply both my technical and creative skills to bring CareSync to life.
+I think i am most proud of the video that was made during the story. This is because although i built a simple feature, coding was something that i have been doing since y1. When i had this vision for the story and seeing it all come together in a video was the most fufilling for me. From the very start of the project i was quite intimidated by having to create mobile apps but i think as time went by i was able to appreciate what jetpack compose was doing and even form my own opinions on their methodology. I think i have tried enough to know that jetpack compose is probably not what i want to pursue in the future haha.
 
 ### Jay
 
@@ -199,3 +199,9 @@ Through this project, I learned how to effectively manage UI state in Jetpack Co
 I’m most proud of successfully implementing an intuitive and responsive user interface that enhances usability, especially with the smooth card expansion animations and clear visual feedback on clinic stock statuses. Additionally, managing component states and ensuring the UI remains consistent and performant as data changes significantly improved my ability to debug complex interactions. This experience greatly boosted my confidence in handling interactive elements and delivering polished, user-friendly components.
 
 ### Zhe Tao
+
+I was mainly responsible for developing the medication feature of our prototype, which included both the UI and data layers. Specifically, I designed and implemented the medication listing screen and the feature to add new medications. I paid special attention to keeping the UI modular, allowing for dynamic creation of icons that represent different types of medication. Beyond coding, I also contributed by acting in the presentation.
+
+Throughout the project, I significantly deepened my understanding of Jetpack Compose, especially in terms of creating responsive UIs. I also learned the importance of using architectural components like DAOs, view models, and Composables to create scalable and maintainable code. Setting up preview screens was a particularly valuable takeaway, as it sped up UI development and debugging.
+
+What I’m most proud of is successfully implementing the medication listing feature and seeing it reflected in the calendar view, making it intuitive for users to track their meds. This achievement gave me a big confidence boost and marked a personal “glow up” in my journey as a mobile app developer. I now feel much more ready and motivated to build full-featured mobile applications using Kotlin.
