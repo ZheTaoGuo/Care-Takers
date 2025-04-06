@@ -73,7 +73,7 @@ Whether you're managing your own care or helping someone else, CareSync brings c
 
 ### 🖥️ System Diagram
 
-![System Diagram](./project-cs461-ay2024-t2-g1-2/assets/system-diagram.png)
+![System Diagram](assets/system-diagram.png)
 
 ## ✨ Features & Benefits
 
