@@ -12,7 +12,7 @@ Whether you're a patient or a caregiver, CareSync keeps everyone in sync — bec
 
 <table>
   <tr>
-    <td><img src="reminder.jpg" alt="Reminder" width="160"/></td>
+    <td><img src="assets/reminder.jpg" alt="Reminder" width="160"/></td>
     <td>
       <em>“Half of all patients don’t take their meds as prescribed.”</em><br/>
       — <strong>World Health Organization</strong><br/><br/>
@@ -34,7 +34,7 @@ These numbers aren’t just stats—they're **lives** at risk. And that’s wher
 <table>
   <tr>
     <td>
-      <img src="users.jpg" alt="User Needs" width="240"/>
+      <img src="assets/users.jpg" alt="User Needs" width="240"/>
     </td>
     <td>
    <h4>👩‍⚕️ Caregivers</h4>
